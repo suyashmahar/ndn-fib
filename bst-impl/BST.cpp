@@ -61,7 +61,6 @@ class node{
 
 class bst{
     private:
-        void addToNode(node *ref, unsigned long element);
         void constructPostOrderTraversal(node *ref, std::stringstream &ss);
         void constructPreOrderTraversal(node *ref, std::stringstream &ss);
         void constructInOrderTraversal(node *ref, std::stringstream &ss);
@@ -71,7 +70,8 @@ class bst{
         bst(){
             root = NULL;
         }
-  void add(unsigned long element);
+        node* addToNode(node *ref, unsigned long element);
+        node* add(unsigned long element);
         void postorderPrint(node* p, int indent=0);
         bool search(node *ref, unsigned long element);
         unsigned long nodeCount(node *ref);
@@ -97,31 +97,34 @@ class bst{
         }
 };
 
-void bst::addToNode(node *ref, unsigned long element) {
-    if (ref->data == element){
-        return;
-    } else if (ref->data <= element) {
-        if (ref->right == NULL){
-            node *newNode = new node(element, NULL, NULL);
-            ref->right = newNode;
-        } else {
-            addToNode(ref->right, element);
-        }
+node* bst::addToNode(node *ref, unsigned long element) {
+  if (ref->data == element){
+    return ref;
+  } else if (ref->data <= element) {
+    if (ref->right == NULL){
+      node *newNode = new node(element, NULL, NULL);
+      ref->right = newNode;
+      return newNode;
     } else {
-        if (ref->left == NULL){
-            node *newNode = new node(element, NULL, NULL);
-            ref->left = newNode;
-        } else {
-            addToNode(ref->left, element);
-        }
+      return addToNode(ref->right, element);
     }
+  } else {
+    if (ref->left == NULL){
+      node *newNode = new node(element, NULL, NULL);
+      ref->left = newNode;
+      return newNode;
+    } else {
+      return addToNode(ref->left, element);
+    }
+  }
 }
 
-void bst::add(unsigned long element){
+node* bst::add(unsigned long element){
     if (root == NULL){
         root = new node(element, NULL, NULL);
+	return root;
     } else {
-        addToNode(root, element);
+        return addToNode(root, element);
     }
 }
 
@@ -278,47 +281,59 @@ int main() {
 
   // <>================================
   std::cout << "Starting analysis:" << std::endl;
-  std::ifstream file("/home/suyash/Documents/GitHub/ndn-pit/datasets/1Mdataset.unique.sorted.fib");
+  std::ifstream file("/home/suyash/Documents/GitHub/ndn-pit/datasets/1Mdataset.unique.trim.sort_len.fib");
 
   std::string line;
   int lineCount = 0;
 
   std::cout << "State of stream:" << file.good() << std::endl;
-  while (std::getline(file, line)) {
-    //std::cout << "processing line: " << line << "\n";
-    if (lineCount > 2) {
+
+  
+  node* root = newTree.add(0000); 
+   
+  //while (std::getline(file, line)) {
+  while (1==1){
+    // std::cout << "processing line: " << line << "\k";
+    if (lineCount > 1) {
       break;
     }
-    
+
+    // Here starts addition logic for each line
+    line = "/com/google/scholar";
     int strideLen = 0; // Tracks length of stride
     std::stringstream nextStride("");
+
+    std::vector<long> strideCollection;
     for (unsigned int i = 0; i < line.length(); i++) {
       char curChar = line[i];
-      if (strideLen >= 2) {
+      if (strideLen >= 3) {
 	strideLen = 1;
-	newTree.add(stringToULong(nextStride.str().c_str()));
+	strideCollection.push_back(stringToULong(nextStride.str().c_str()));
+	// newTree.add(stringToULong(nextStride.str().c_str()));
 	nextStride.str("");
 	nextStride << curChar;
       } else if (curChar == '/') {
 	strideLen = 1;
-	newTree.add(stringToULong(nextStride.str().c_str()));
+	strideCollection.push_back(stringToULong(nextStride.str().c_str()));
+	// newTree.add(stringToULong(nextStride.str().c_str()));
 	nextStride.str("");
 	nextStride << curChar;
       } else {
 	strideLen++;
 	nextStride << curChar;
       }
-      // if (strideLen++ <= 2 && line[i] != '/') {
-      // 	nextStride << line[i];
-      // 	//std::cout << nextStride.str() << std::endl;
-      // } else {
-      // 	//std::cout << "content: " << stringToULong(nextStride.str()) << std::endl;
-      // 	newTree.add(stringToULong(nextStride.str().c_str()));
-      // 	strideLen = 0;
-      // 	nextStride.str("");
-      // }
-      
     }
+
+    // Push last element in collection
+    strideCollection.push_back(stringToULong(nextStride.str().c_str()));
+
+    // Here starts addition of all strides generated
+    // =============================================
+    node* inserted = root;
+    for (unsigned long stride : strideCollection) {
+      inserted = newTree.addToNode(inserted, stride);
+    }
+    
     // std::cout << "Lines proccessed: " << lineCount << '\r';
     lineCount++;
   }
@@ -343,7 +358,10 @@ int main() {
     
   // Prunsigned longs structure of the tree from left to right (like a fallen tree)
   std::cout << std::endl << "Here\'s a tree for you" << std::endl << std::endl;
+  
+  // Uncomment following line to print tree
   newTree.postorderPrint(newTree.root, 0);
+
   std::cout << std::endl;
 
   //std::cout << "searching for \'470\'... \nResult: " 
