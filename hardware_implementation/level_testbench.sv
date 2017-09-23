@@ -47,7 +47,7 @@ module level_testbench;
        #50 clk = ~clk;
 
        address_in = {{(POINTER_SIZE-1){1'b0}},{1'b1}};
-       lookup_cont_in = "\\l";
+       lookup_cont_in = "\Xl";
        
        #50 clk = ~clk;
        #50 clk = ~clk;

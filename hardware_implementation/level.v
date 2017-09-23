@@ -18,7 +18,7 @@ module level
     parameter MEM_SIZE = 2,
     parameter LEVEL_ID = 1
     )( 
-      input 				clk,
+      input 				clk_in,
       input [POINTER_SIZE - 1 : 0] 	address_in,
       input [WORD_SIZE - 1 : 0] 	lookup_cont_in,
   
