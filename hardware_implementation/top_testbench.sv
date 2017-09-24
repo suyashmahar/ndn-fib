@@ -3,73 +3,57 @@
 `timescale 1ns/1ps
 
 module top_testbench;
-   parameter DATA_FILE_NAME = "/home/suyash/Documents/GitHub/ndn_implementation/em/data/names_data.dat";
-   parameter WORD_SIZE = 64;
+   parameter DATA_FILE_NAME = "C:\\Users\\Suyash\\Dropbox\\backup\\ndn_implementation\\em\\data\\names_data.dat";
+   parameter WORD_SIZE = 32;
    parameter POINTER_SIZE = 16;
-   parameter MAX_NAME_LENGTH = 16; // max length of name in words
-   
-   // Variables for reading data from file
-   integer 				data_file;
-   integer 				scan_file;
+   parameter MAX_NAME_LENGTH = 8; // max length of name in words
 
+   
+   integer counter = 0;
 
    // Module variables
    reg 					clk;
-   reg [WORD_SIZE - 1 : 0] 		nextName [MAX_NAME_LENGTH - 1 : 0];
+   reg [WORD_SIZE - 1 : 0] 		nextName [8 : 0][MAX_NAME_LENGTH - 1:0];
    
    top
      #(
        .TREE_HEIGHT(4)
        ) dut (
 	      .clk(clk),
-	      .next_name_in(nextName)
+	      .next_name_in(nextName[counter])
 	      );
-
-   int 					counter = 0;
-   reg [WORD_SIZE - 1 : 0] 		result;
-   // Extracts next name from data stream and places in 'nextName' reg
-   task extractNextName();
-       counter = 0; 
-       scan_file = $fscanf(data_file, "%s\n", result);
-       
-       while(result != "{{}}")     begin
-       	   nextName[counter] = result;
-	   $display("counter : %d", counter);
-	   
-	   counter++;
-	   scan_file = $fscanf(data_file, "%s\n", result);
-       end
-
-       for (counter = counter; counter < MAX_NAME_LENGTH; counter++) begin
-	   nextName[counter] = {WORD_SIZE{1'b0}};
-       end
-   endtask // getNextName
    
+   reg [WORD_SIZE - 1 : 0] 		result;
+
+   integer 				data_file    ; // file handler
+   integer 				scan_file    ; // file handler
+   integer 				i,j;
+   
+   logic   signed [21:0] 		captured_data;
    initial begin
-       data_file = $fopen(DATA_FILE_NAME, "r");
-       
-       if (data_file == `NULL) begin
- 	   $display("ERROR: data file can't be read");
-	   $finish;
+       data_file = $fopen("C:\\Users\\Suyash\\Dropbox\\backup\\ndn_implementation\\em\\data\\names_data_mod.dat", "r");
+       for (i = 0; i < 9; i++) begin
+	   for (j = 0; j < 8; j++) begin
+	       scan_file = $fscanf(data_file, "%x", nextName[i][j]);
+	   end
        end
        
        clk = 1;
    end
-
+   
+   
    always begin
-       #10 clk = ~clk;
-
-       if ($feof(data_file)) begin
-	   $display("End of file reached, continuing simulation");
-       end
-
-       extractNextName();
+       #25 clk = ~clk;
        
-       #10 clk = ~clk;
+       #25 clk = ~clk;
 
+
+       if (counter != 8) begin
+	   counter++;
+       end
    end
 
    always @(result) begin
-       $display("%d", result);
+       //$display("%d", result);
    end
 endmodule // top_testbench
