@@ -11,56 +11,65 @@ module top_testbench;
    // Variables for reading data from file
    integer 				data_file;
    integer 				scan_file;
-   reg [WORD_SIZE - 1 : 0]  captured_data [MAX_NAME_LENGTH - 1 : 0];
+
 
    // Module variables
    reg 					clk;
-   reg [WORD_SIZE - 1 : 0] nextName [MAX_NAME_LENGTH - 1 : 0];
+   reg [WORD_SIZE - 1 : 0] 		nextName [MAX_NAME_LENGTH - 1 : 0];
    
    top
      #(
        .TREE_HEIGHT(4)
        ) dut (
 	      .clk(clk),
-	      .next_name_in(nextName));
+	      .next_name_in(nextName)
+	      );
 
-   // Initializes file stream to read data from
-   function int initializeDataFileStream();
-       data_file = $fopen(DATA_FILE_NAME, "r");
-   endfunction // initializeDataFileStream
-
-   // Returns next name from file stream
-   function string getNextName();
-      string 		   result;    
+   int 					counter = 0;
+   reg [WORD_SIZE - 1 : 0] 		result;
+   // Extracts next name from data stream and places in 'nextName' reg
+   task extractNextName();
+       counter = 0; 
        scan_file = $fscanf(data_file, "%s\n", result);
-       return result;
-   endfunction // getNextName
+       
+       while(result != "{{}}")     begin
+       	   nextName[counter] = result;
+	   $display("counter : %d", counter);
+	   
+	   counter++;
+	   scan_file = $fscanf(data_file, "%s\n", result);
+       end
+
+       for (counter = counter; counter < MAX_NAME_LENGTH; counter++) begin
+	   nextName[counter] = {WORD_SIZE{1'b0}};
+       end
+   endtask // getNextName
    
    initial begin
-       // Initliazes file to read data from
-       initializeDataFileStream();
+       data_file = $fopen(DATA_FILE_NAME, "r");
        
        if (data_file == `NULL) begin
  	   $display("ERROR: data file can't be read");
 	   $finish;
        end
        
-       clk = 0;
+       clk = 1;
    end
 
-   reg [WORD_SIZE - 1 : 0] nextName [MAX_NAME_LENGTH - 1 : 0]
    always begin
-       #10 clk = ~clk;
        #10 clk = ~clk;
 
        if ($feof(data_file)) begin
-	   $finish;
+	   $display("End of file reached, continuing simulation");
        end
-      string nextName = getNextName();
+
+       extractNextName();
        
-       $display(nextName);
-       
-       nextName = nextName;
-       
+       #10 clk = ~clk;
+
+   end
+
+   always @(result) begin
+       $display("%d", result);
    end
 endmodule // top_testbench

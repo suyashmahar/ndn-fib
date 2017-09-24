@@ -18,7 +18,7 @@ module top
     parameter TREE_HEIGHT = 100
     )(
       input 			clk,
-      input [WORD_SIZE - 1 : 0] next_name_in [MAX_NAME_LENGTH - 1 : 0]
+      input [WORD_SIZE - 1 : 0] next_name_in [MAX_NAME_LENGTH - 1 : 0],
       );
    
    // Signals for module
@@ -32,12 +32,10 @@ module top
    genvar 			   levelId;
    generate
        for (levelId = 0; levelId < TREE_HEIGHT; levelId++) begin
-	   level #(
-		   .DATA_FILE_NAME({{GENERIC_FILENAME}, {levelId}, {DATA_FILE_EXT}}),
-		   .LP_FILE_NAME({{GENERIC_FILENAME}, {levelId}, {DATA_FILE_LP}, {DATA_FILE_EXT}}),
-		   .RP_FILE_NAME({{GENERIC_FILENAME}, {levelId}, {DATA_FILE_RP}, {DATA_FILE_EXT}}),
-		   .MEM_SIZE(1<<levelId)
-		   ) level_instance 
+	   level 
+		      #(
+			.MEM_SIZE(1<<levelId)
+			) level_instance 
 		      (
 		       .clk_in(clk),
 		       .address_in(addressPipelineReg[levelId]),
