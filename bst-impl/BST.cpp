@@ -281,7 +281,7 @@ int main() {
 
   // <>================================
   std::cout << "Starting analysis:" << std::endl;
-  std::ifstream file("/home/suyash/Documents/GitHub/ndn-pit/datasets/1Mdataset.unique.trim.sort_len.fib");
+  std::ifstream file("/home/suyash/Documents/GitHub/ndn-pit/datasets/1Mdataset.unique.trim.fib");
 
   std::string line;
   int lineCount = 0;
@@ -291,22 +291,22 @@ int main() {
   
   node* root = newTree.add(0000); 
    
-  //while (std::getline(file, line)) {
-  while (1==1){
+  while (std::getline(file, line)) {
+  // while (1==1){
     // std::cout << "processing line: " << line << "\k";
-    if (lineCount > 1) {
-      break;
+    if (lineCount > 10) {
+      //break;
     }
 
     // Here starts addition logic for each line
-    line = "/com/google/scholar";
+    // line = "/com/google/scholar";
     int strideLen = 0; // Tracks length of stride
     std::stringstream nextStride("");
 
     std::vector<long> strideCollection;
     for (unsigned int i = 0; i < line.length(); i++) {
       char curChar = line[i];
-      if (strideLen >= 3) {
+      if (strideLen >= 5) {
 	strideLen = 1;
 	strideCollection.push_back(stringToULong(nextStride.str().c_str()));
 	// newTree.add(stringToULong(nextStride.str().c_str()));
@@ -353,6 +353,7 @@ int main() {
   //std::cout << "Preorder traversal : " << newTree.preOrderTraversal() << std::endl;
   //std::cout << "InOrder traversal : " << newTree.inOrderTraversal() << std::endl;
 
+  std::cout << "Lines processed : " << lineCount << std::endl;
   std::cout << "Total number of nodes : " << newTree.nodeCount(newTree.root) << std::endl;
   std::cout << "Height of the tree : " << newTree.height(newTree.root) << std::endl;
     
@@ -360,7 +361,7 @@ int main() {
   std::cout << std::endl << "Here\'s a tree for you" << std::endl << std::endl;
   
   // Uncomment following line to print tree
-  newTree.postorderPrint(newTree.root, 0);
+  //newTree.postorderPrint(newTree.root, 0);
 
   std::cout << std::endl;
 
