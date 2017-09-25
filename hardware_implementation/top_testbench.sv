@@ -38,7 +38,7 @@ module top_testbench;
 	   end
        end
        
-       clk = 1;
+       clk = 0;
    end
    
    

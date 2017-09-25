@@ -10,8 +10,8 @@
 
 
 parameter WORD_SIZE = 32;
-parameter POINTER_SIZE = 16;
-parameter MAX_NAME_LENGTH = 16; // max length of name in words
+parameter POINTER_SIZE = 1;
+parameter MAX_NAME_LENGTH = 8; // max length of name in words
 
 module level
   #(
@@ -25,7 +25,7 @@ module level
        output reg [POINTER_SIZE - 1 : 0] next_pointer_out,
        output reg 			 is_match_out,
        output reg 			 no_child_out);
-  
+   
    reg [WORD_SIZE - 1 : 0] 		 word_mem [0 : MEM_SIZE - 1];
    reg [POINTER_SIZE - 1 : 0] 		 left_pointer_mem [0 : MEM_SIZE - 1];
    reg [POINTER_SIZE - 1 : 0] 		 right_pointer_mem [0 : MEM_SIZE - 1];
@@ -56,6 +56,8 @@ module level
        mem_read_val_loc = word_mem[address_in];
        if (lookup_cont_in == mem_read_val_loc) begin
 	   //TODO: fix this
+	   $display("This is awesome!");
+	   
 	   no_child_out = 1'b0;
 	   next_pointer_out = left_pointer_mem[address_in];
 	   is_match_out = 1'b1;
@@ -63,8 +65,6 @@ module level
 	   is_match_out = 1'b0;
 	   if (lookup_cont_in <= mem_read_val_loc) begin
 	       next_pointer_out = left_pointer_mem[address_in];
-	       $display("true");
-	       
 	       no_child_out = ~left_pointer_valid_bits[address_in];
 	   end else begin
 	       next_pointer_out = right_pointer_mem[address_in];
