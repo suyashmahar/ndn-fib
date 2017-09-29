@@ -5,31 +5,84 @@
 module top_testbench;
    parameter DATA_FILE_NAME = "C:\\Users\\Suyash\\Dropbox\\backup\\ndn_implementation\\em\\data\\names_data.dat";
    parameter WORD_SIZE = 32;
-   parameter POINTER_SIZE = 16;
+   parameter TREE_HEIGHT = 4;
+   parameter POINTER_SIZE = 6;
    parameter MAX_NAME_LENGTH = 8; // max length of name in words
+   parameter STRIDE_INDEX_SIZE = 3;
 
    
    integer counter = 0;
 
    // Module variables
-   reg 					clk;
-   reg [WORD_SIZE - 1 : 0] 		nextName [8 : 0][MAX_NAME_LENGTH - 1:0];
+   reg 	   clk;
+   reg [WORD_SIZE - 1 : 0] nextName [7 : 0][MAX_NAME_LENGTH - 1 : 0];
+   wire 		   matchBool [TREE_HEIGHT - 1 : 0];
+   
+   integer 		   name_counter = 0;
+
+   wire 		   dummy_output_0;
+   wire 		   dummy_output_1;
+   wire 		   dummy_output_2;
+   wire 		   dummy_output_3;
+   wire 		   debug_address_pipeline_reg_0;
+
+   wire [WORD_SIZE - 1 : 0] words_pipeline_3_0;
+   wire [WORD_SIZE - 1 : 0] words_pipeline_3_1;
+   wire [WORD_SIZE - 1 : 0] words_pipeline_3_2;
+   wire [WORD_SIZE - 1 : 0] words_pipeline_3_3;
+   wire [WORD_SIZE - 1 : 0] words_pipeline_3_4;
+   wire [WORD_SIZE - 1 : 0] words_pipeline_3_5;
+   wire [WORD_SIZE - 1 : 0] words_pipeline_3_6;
+   wire [WORD_SIZE - 1 : 0] words_pipeline_3_7;
+
+   
+   // Wires for debugging stride count
+   wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_0;
+   wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_1;
+   wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_2;
+   wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_3;
+   //--------------------------------------
+
    
    top
      #(
        .TREE_HEIGHT(4)
        ) dut (
-	      .clk(clk),
-	      .next_name_in(nextName[counter])
+	      .clk_in(clk),
+	      .name_component(nextName[counter][name_counter]),
+	      .dummy_output_0(dummy_output_0),
+	      .dummy_output_1(dummy_output_1),
+	      .dummy_output_2(dummy_output_2),
+	      .dummy_output_3(dummy_output_3),
+	      
+	      .words_pipeline_3_0(words_pipeline_3_0),
+	      .words_pipeline_3_1(words_pipeline_3_1),
+	      .words_pipeline_3_2(words_pipeline_3_2),
+	      .words_pipeline_3_3(words_pipeline_3_3),
+	      .words_pipeline_3_4(words_pipeline_3_4),
+	      .words_pipeline_3_5(words_pipeline_3_5),
+	      .words_pipeline_3_6(words_pipeline_3_6),
+	      .words_pipeline_3_7(words_pipeline_3_7),
+
+	      
+	      // Wires for debugging stride count
+	      .stageStrideIndex_0(stageStrideIndex_0),
+	      .stageStrideIndex_1(stageStrideIndex_1),
+	      .stageStrideIndex_2(stageStrideIndex_2),
+	      .stageStrideIndex_3(stageStrideIndex_3),
+	      //--------------------------------------
+	      
+	      .debug_address_pipeline_reg_0(debug_address_pipeline_reg_0)
+	      //.matchBool(matchBool)
 	      );
    
-   reg [WORD_SIZE - 1 : 0] 		result;
-
-   integer 				data_file    ; // file handler
-   integer 				scan_file    ; // file handler
-   integer 				i,j;
+   reg [WORD_SIZE - 1 : 0] 	    result;
    
-   logic   signed [21:0] 		captured_data;
+   integer 			    data_file    ; // file handler
+   integer 			    scan_file    ; // file handler
+   integer 			    i,j;
+   
+   logic   signed [21:0] 	    captured_data;
    initial begin
        data_file = $fopen("C:\\Users\\Suyash\\Dropbox\\backup\\ndn_implementation\\em\\data\\names_data_mod.dat", "r");
        for (i = 0; i < 9; i++) begin
@@ -37,23 +90,32 @@ module top_testbench;
 	       scan_file = $fscanf(data_file, "%x", nextName[i][j]);
 	   end
        end
-       
        clk = 0;
+       
    end
-   
+
+   reg flipper = 0;
+   reg first_time = 1;
    
    always begin
-       #25 clk = ~clk;
-       
-       #25 clk = ~clk;
+       if (first_time == 1) begin
+	   #50
+	     first_time = 0;
+       end else begin
+	   #25 clk = ~clk;
+	   #25 clk = ~clk;
 
 
-       if (counter != 8) begin
-	   counter++;
+	   if (counter != 8) begin
+	       if (name_counter == MAX_NAME_LENGTH - 1) begin
+		   counter++;
+	       end 
+	       // Logic for flatening data to supply to module
+	       if (flipper == 1'b1) begin
+		   name_counter = (name_counter+1)%MAX_NAME_LENGTH;
+	       end
+	   end
+	   flipper = ~flipper;
        end
-   end
-
-   always @(result) begin
-       //$display("%d", result);
    end
 endmodule // top_testbench
