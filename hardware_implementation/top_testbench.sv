@@ -98,24 +98,24 @@ module top_testbench;
    reg first_time = 1;
    
    always begin
-       if (first_time == 1) begin
-	   #50
-	     first_time = 0;
-       end else begin
-	   #25 clk = ~clk;
-	   #25 clk = ~clk;
-
-
-	   if (counter != 8) begin
-	       if (name_counter == MAX_NAME_LENGTH - 1) begin
-		   counter++;
-	       end 
-	       // Logic for flatening data to supply to module
-	       if (flipper == 1'b1) begin
-		   name_counter = (name_counter+1)%MAX_NAME_LENGTH;
-	       end
-	   end
-	   flipper = ~flipper;
+       if (first_time) begin
+	   #50 first_time = 0;
        end
+       #25 clk = ~clk;
+       #25 clk = ~clk;
+
+
+       if (counter != 8) begin
+	   // Logic for flatening data to supply to module
+	   if (flipper == 1'b1) begin
+	       name_counter++;
+	   end
+	   if (name_counter == MAX_NAME_LENGTH) begin
+	       counter++;
+	       name_counter = 0;
+	   end 
+       end
+       flipper = ~flipper;
+
    end
 endmodule // top_testbench

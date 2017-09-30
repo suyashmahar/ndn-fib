@@ -22,6 +22,7 @@ parameter MAX_NAME_LENGTH = 8; // max length of name in words
        input 				 clk_in,
        input [POINTER_SIZE - 1 : 0] 	 address_in,
        input [WORD_SIZE - 1 : 0] 	 lookup_cont_in,
+       input [WORD_SIZE - 1 : 0] 	 next_lookup_cont_in,
        input [WORD_SIZE - 1 : 0] 	 fake_word_in, // Input that forces vivado to use BRAM for all memories 
        input [POINTER_SIZE - 1 : 0] 	 fake_add_in, 
        input [POINTER_SIZE - 1 : 0] 	 fake_input_write_address,
@@ -70,13 +71,19 @@ parameter MAX_NAME_LENGTH = 8; // max length of name in words
    reg [WORD_SIZE - 1 : 0] left_mem_res;
    reg [WORD_SIZE - 1 : 0] right_mem_res;
    
+
+   wire [POINTER_SIZE - 1 : 0] next_pointer_match;
+   wire [POINTER_SIZE - 1 : 0] next_pointer_no_match;
    
-   assign is_match_out = (mem_read_val_loc == lookup_cont_in) ? 1'b1 : 1'b0;
-   assign next_pointer_out = (lookup_cont_in <= mem_read_val_loc) ? left_mem_res : right_mem_res;
-   assign word_mem_loc_read =  mem_read_val_loc;
+   assign word_mem_loc_read =  word_mem[address_in];
+   assign is_match_out = (word_mem_loc_read == lookup_cont_in) ? 1'b1 : 1'b0;
+
+   assign next_pointer_no_match = (lookup_cont_in < word_mem_loc_read) ?  left_pointer_mem[address_in] : right_pointer_mem[address_in];
+   assign next_pointer_match = (next_lookup_cont_in <= lookup_cont_in) ? left_pointer_mem[address_in] : right_pointer_mem[address_in];
+   assign next_pointer_out = (lookup_cont_in == word_mem_loc_read) ?  next_pointer_match : next_pointer_no_match;
    
    always @(posedge clk_in) begin
-       #2
+       #26
        mem_read_val_loc = word_mem[address_in];
        left_mem_res = left_pointer_mem[address_in];
        right_mem_res = right_pointer_mem[address_in];

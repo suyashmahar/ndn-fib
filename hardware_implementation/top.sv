@@ -142,6 +142,7 @@ parameter STRIDE_INDEX_SIZE = 3;
 		       .clk_in(clk),
 		       .address_in(addressPipelineReg[levelId]),
 		       .lookup_cont_in(wordsPiplineReg[levelId][stageStrideIndex[levelId]]),
+		       .next_lookup_cont_in(wordsPiplineReg[levelId][stageStrideIndex[levelId]+1]),
 		       .word_mem_loc_read(word_mem_loc_read[levelId]),
 		       .next_pointer_out(addressPipelineOut[levelId]),
 		       .is_match_out(matchBool[levelId]),
