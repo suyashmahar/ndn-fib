@@ -3,7 +3,7 @@
 `timescale 1ns/1ps
 
 module top_testbench;
-   parameter DATA_FILE_NAME = "C:\\Users\\Suyash\\Dropbox\\backup\\ndn_implementation\\em\\data\\names_data.dat";
+   parameter DATA_FILE_NAME = "/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/names_data.dat";
    parameter WORD_SIZE = 32;
    parameter TREE_HEIGHT = 4;
    parameter POINTER_SIZE = 6;
@@ -84,7 +84,7 @@ module top_testbench;
    
    logic   signed [21:0] 	    captured_data;
    initial begin
-       data_file = $fopen("C:\\Users\\Suyash\\Dropbox\\backup\\ndn_implementation\\em\\data\\names_data_mod.dat", "r");
+       data_file = $fopen("/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/names_data_mod.dat", "r");
        for (i = 0; i < 9; i++) begin
 	   for (j = 0; j < 8; j++) begin
 	       scan_file = $fscanf(data_file, "%x", nextName[i][j]);

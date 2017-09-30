@@ -17,11 +17,18 @@ parameter STRIDE_INDEX_SIZE = 3;
     )(
       input 				      clk_in,
       input [WORD_SIZE - 1 : 0] 	      name_component,
+      
+      // Inputs for forcing vivado to use RAMS for memories
+      input wire 			      fake_word_in,
+      input wire 			      fake_add_in,
+      input wire 			      fake_input_write_address,
+      // --------------------------------------------------
+      
       output wire 			      dummy_output_0,
       output wire 			      dummy_output_1,
       output wire 			      dummy_output_2,
       output wire 			      dummy_output_3,
-  
+      
       // Outputs for debuging pipeline stages
       output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_0,
       output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_1,
@@ -135,7 +142,7 @@ parameter STRIDE_INDEX_SIZE = 3;
        for (levelId = 0; levelId < TREE_HEIGHT; levelId++) begin
 	   level 
 		      #(
-			.MEM_SIZE(4/*1<<levelId*/),
+			.MEM_SIZE(16*1024/*1<<levelId*/),
 			.LEVEL_ID(levelId)
 			) level_instance 
 		      (
@@ -143,6 +150,12 @@ parameter STRIDE_INDEX_SIZE = 3;
 		       .address_in(addressPipelineReg[levelId]),
 		       .lookup_cont_in(wordsPiplineReg[levelId][stageStrideIndex[levelId]]),
 		       .next_lookup_cont_in(wordsPiplineReg[levelId][stageStrideIndex[levelId]+1]),
+		       // Inputs for forcing vivado to use RAMS for memories
+		       .fake_word_in(fake_word_in),
+		       .fake_add_in(fake_add_in),
+		       .fake_input_write_address(fake_input_write_address),
+		       // --------------------------------------------------
+		       
 		       .word_mem_loc_read(word_mem_loc_read[levelId]),
 		       .next_pointer_out(addressPipelineOut[levelId]),
 		       .is_match_out(matchBool[levelId]),

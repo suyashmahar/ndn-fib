@@ -16,7 +16,7 @@ parameter MAX_NAME_LENGTH = 8; // max length of name in words
 
 (*DONT_TOUCH = "true"*)module level
   #(
-    parameter int MEM_SIZE = 4,
+    parameter int MEM_SIZE = 16*1024,
     parameter LEVEL_ID = 1
     )( 
        input 				 clk_in,
@@ -59,12 +59,12 @@ parameter MAX_NAME_LENGTH = 8; // max length of name in words
        end
        $display(LEVEL_ID);
        
-       $readmemh({"C:\\Users\\Suyash\\Dropbox\\backup\\","ndn_implementation\\em\\data\\level", {LEVEL_ID+1{"_"}}, ".dat"}, word_mem);
-       $readmemh({"C:\\Users\\Suyash\\Dropbox\\backup\\","ndn_implementation\\em\\data\\level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_mem);
-       $readmemh({"C:\\Users\\Suyash\\Dropbox\\backup\\","ndn_implementation\\em\\data\\level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_mem);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, ".dat"}, word_mem);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_mem);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_mem);
        
-       $readmemh({"C:\\Users\\Suyash\\Dropbox\\backup\\","ndn_implementation\\em\\data\\vb_level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_valid_bits);
-       $readmemh({"C:\\Users\\Suyash\\Dropbox\\backup\\","ndn_implementation\\em\\data\\vb_level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_valid_bits);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/vb_level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_valid_bits);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/vb_level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_valid_bits);
    end // initial begin
 
    reg [WORD_SIZE - 1 : 0] mem_read_val_loc;
@@ -99,9 +99,9 @@ parameter MAX_NAME_LENGTH = 8; // max length of name in words
        end // else: !if(lookup_cont_in == mem[address_in])
        
        // Fake logic to force vivado to use BRAM for memories instead of registers
-       //word_mem[fake_input_write_address] = fake_word_in;
-       //left_pointer_mem[fake_input_write_address] = fake_add_in;
-       //right_pointer_mem[fake_input_write_address] = fake_add_in;       
+       word_mem[fake_input_write_address] = fake_word_in;
+       left_pointer_mem[fake_input_write_address] = fake_add_in;
+       right_pointer_mem[fake_input_write_address] = fake_add_in;       
    end
    
 endmodule
