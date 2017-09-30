@@ -1,0 +1,17 @@
+create_clock -period 10.000 -name clk_in -waveform {0.000 5.000} [get_ports clk_in]
+create_generated_clock -name clk_reg_n_0_BUFG_inst_n_0 -source [get_ports clk_in] -divide_by 2 [get_pins clk_reg/Q]
+create_generated_clock -name flipper -source [get_ports clk_in] -divide_by 16 [get_pins flipper_reg/Q]
+create_clock -period 160.000 -name VIRTUAL_flipper -waveform {0.000 80.000}
+set_input_delay -clock [get_clocks VIRTUAL_flipper] -min -add_delay 1.000 [get_ports {name_component[*]}]
+set_input_delay -clock [get_clocks VIRTUAL_flipper] -max -add_delay 2.000 [get_ports {name_component[*]}]
+create_clock -period 20.000 -name VIRTUAL_clk_reg_n_0_BUFG_inst_n_0 -waveform {0.000 10.000}
+set_output_delay -clock [get_clocks VIRTUAL_clk_reg_n_0_BUFG_inst_n_0] -min -add_delay 0.000 [get_ports debug_address_pipeline_reg_0]
+set_output_delay -clock [get_clocks VIRTUAL_clk_reg_n_0_BUFG_inst_n_0] -max -add_delay 0.000 [get_ports debug_address_pipeline_reg_0]
+set_output_delay -clock [get_clocks VIRTUAL_clk_reg_n_0_BUFG_inst_n_0] -min -add_delay 0.000 [get_ports dummy_output_0]
+set_output_delay -clock [get_clocks VIRTUAL_clk_reg_n_0_BUFG_inst_n_0] -max -add_delay 0.000 [get_ports dummy_output_0]
+set_output_delay -clock [get_clocks VIRTUAL_clk_reg_n_0_BUFG_inst_n_0] -min -add_delay 0.000 [get_ports dummy_output_1]
+set_output_delay -clock [get_clocks VIRTUAL_clk_reg_n_0_BUFG_inst_n_0] -max -add_delay 0.000 [get_ports dummy_output_1]
+set_output_delay -clock [get_clocks VIRTUAL_clk_reg_n_0_BUFG_inst_n_0] -min -add_delay 0.000 [get_ports dummy_output_2]
+set_output_delay -clock [get_clocks VIRTUAL_clk_reg_n_0_BUFG_inst_n_0] -max -add_delay 0.000 [get_ports dummy_output_2]
+set_output_delay -clock [get_clocks VIRTUAL_clk_reg_n_0_BUFG_inst_n_0] -min -add_delay 0.000 [get_ports dummy_output_3]
+set_output_delay -clock [get_clocks VIRTUAL_clk_reg_n_0_BUFG_inst_n_0] -max -add_delay 0.000 [get_ports dummy_output_3]
