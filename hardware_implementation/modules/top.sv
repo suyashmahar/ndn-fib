@@ -29,16 +29,16 @@ parameter STRIDE_INDEX_SIZE = 3;
       output wire 			      dummy_output_2,
       output wire 			      dummy_output_3,
       
-      // Outputs for debuging pipeline stages
-      output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_0,
-      output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_1,
-      output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_2,
-      output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_3,
-      output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_4,
-      output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_5,
-      output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_6,
-      output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_7, 
-      // -------------------------------------
+      // // Outputs for debuging pipeline stages
+      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_0,
+      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_1,
+      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_2,
+      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_3,
+      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_4,
+      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_5,
+      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_6,
+      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_7, 
+      // // -------------------------------------
 
       // Outputs for debugging stride count
       output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_0,
@@ -71,16 +71,16 @@ parameter STRIDE_INDEX_SIZE = 3;
    assign debug_address_pipeline_reg_0 = addressPipelineReg[1];
    
 
-   // Assignments for words_pipelining
-   assign words_pipeline_3_0 = wordsPiplineReg[3][0];
-   assign words_pipeline_3_1 = wordsPiplineReg[3][1];
-   assign words_pipeline_3_2 = wordsPiplineReg[3][2];
-   assign words_pipeline_3_3 = wordsPiplineReg[3][3];
-   assign words_pipeline_3_4 = wordsPiplineReg[3][4];
-   assign words_pipeline_3_5 = wordsPiplineReg[3][5];
-   assign words_pipeline_3_6 = wordsPiplineReg[3][6];
-   assign words_pipeline_3_7 = wordsPiplineReg[3][7];
-   // --------------------------------
+   // // Assignments for words_pipelining
+   // assign words_pipeline_3_0 = wordsPiplineReg[3][0];
+   // assign words_pipeline_3_1 = wordsPiplineReg[3][1];
+   // assign words_pipeline_3_2 = wordsPiplineReg[3][2];
+   // assign words_pipeline_3_3 = wordsPiplineReg[3][3];
+   // assign words_pipeline_3_4 = wordsPiplineReg[3][4];
+   // assign words_pipeline_3_5 = wordsPiplineReg[3][5];
+   // assign words_pipeline_3_6 = wordsPiplineReg[3][6];
+   // assign words_pipeline_3_7 = wordsPiplineReg[3][7];
+   // // --------------------------------
    
    // assignement for debugging stride count
    assign stageStrideIndex_0 = stageStrideIndex[0];

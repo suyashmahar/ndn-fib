@@ -34,7 +34,7 @@ parameter MAX_NAME_LENGTH = 8; // max length of name in words
        output reg 			 no_child_out);
    (*DONT_TOUCH = "true"*)reg [31:0] sample_RAM [4095:0];
    
-   (*DONT_TOUCH = "true"*)reg [WORD_SIZE - 1 : 0] 		 word_mem [0 : MEM_SIZE - 1];
+   (* ram_style = "ultra" *)reg [WORD_SIZE - 1 : 0] 		 word_mem [0 : MEM_SIZE - 1];
    (*DONT_TOUCH = "true"*)reg [POINTER_SIZE - 1 : 0] 		 left_pointer_mem [0 : MEM_SIZE - 1];
    (*DONT_TOUCH = "true"*)reg [POINTER_SIZE - 1 : 0] 		 right_pointer_mem [0 : MEM_SIZE - 1];
    (*DONT_TOUCH = "true"*)reg 					 left_pointer_valid_bits [0 : MEM_SIZE - 1];
