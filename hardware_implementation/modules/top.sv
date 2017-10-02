@@ -10,7 +10,7 @@ parameter STRIDE_INDEX_SIZE = 3;
 
 (*DONT_TOUCH = "true"*)module top
   #(
-    parameter TREE_HEIGHT =  4,
+    parameter TREE_HEIGHT =  5,
     parameter WORD_SIZE = 32,
     parameter POINTER_SIZE = 6,
     parameter MAX_NAME_LENGTH = 8 // max length of name in words
@@ -27,7 +27,8 @@ parameter STRIDE_INDEX_SIZE = 3;
       output wire 			      dummy_output_0,
       output wire 			      dummy_output_1,
       output wire 			      dummy_output_2,
-      output wire 			      dummy_output_3,
+      output wire                 dummy_output_3,
+      output wire                 dummy_output_4,
       
       // // Outputs for debuging pipeline stages
       // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_0,
@@ -67,6 +68,7 @@ parameter STRIDE_INDEX_SIZE = 3;
    assign dummy_output_1 = matchBool[1];
    assign dummy_output_2 = matchBool[2];
    assign dummy_output_3 = matchBool[3];
+   assign dummy_output_4 = matchBool[4];
    
    assign debug_address_pipeline_reg_0 = addressPipelineReg[1];
    
@@ -103,7 +105,7 @@ parameter STRIDE_INDEX_SIZE = 3;
    always @(posedge clk_in) begin
        if (mod_clk_counter == 2*MAX_NAME_LENGTH-1) begin
 	   clk = ~clk;
-       end else if (mod_clk_counter == 2*MAX_NAME_LENGTH - 3) begin
+       end else if (mod_clk_counter == MAX_NAME_LENGTH) begin
 	   clk = 0;
        end
        mod_clk_counter = (mod_clk_counter + 1)%(2*MAX_NAME_LENGTH);
@@ -139,7 +141,7 @@ parameter STRIDE_INDEX_SIZE = 3;
    
    genvar 			       levelId;
    generate
-       for (levelId = 0; levelId < TREE_HEIGHT; levelId++) begin
+       for (levelId = 0; levelId < TREE_HEIGHT-1; levelId++) begin
 	   level 
 		      #(
 			.MEM_SIZE(16*1024/*1<<levelId*/),
@@ -163,7 +165,29 @@ parameter STRIDE_INDEX_SIZE = 3;
 		       );
        end // for (LevelId = 0; i < TREE_HEIGHT; i++)
    endgenerate
-
+   
+	   level4 
+          #(
+        .MEM_SIZE(16*1024/*1<<levelId*/),
+        .LEVEL_ID(4)
+        ) level4_i
+          (
+           .clk_in(clk),
+           .address_in(addressPipelineReg[4]),
+           .lookup_cont_in(wordsPiplineReg[4][stageStrideIndex[4]]),
+           .next_lookup_cont_in(wordsPiplineReg[4][stageStrideIndex[4]+1]),
+           // Inputs for forcing vivado to use RAMS for memories
+           .fake_word_in(fake_word_in),
+           .fake_add_in(fake_add_in),
+           .fake_input_write_address(fake_input_write_address),
+           // --------------------------------------------------
+           
+           .word_mem_loc_read(word_mem_loc_read[4]),
+           .next_pointer_out(addressPipelineOut[4]),
+           .is_match_out(matchBool[4]),
+           .no_child_out(noChildBool[4])
+           );
+           
    initial begin
       integer loop_var_0, loop_var_1;
        for (loop_var_0 = 0; loop_var_0 < TREE_HEIGHT; loop_var_0++) begin
