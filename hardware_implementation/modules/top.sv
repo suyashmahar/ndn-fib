@@ -166,6 +166,8 @@ parameter STRIDE_INDEX_SIZE = 3;
        end // for (LevelId = 0; i < TREE_HEIGHT; i++)
    endgenerate
    
+   
+   // Generate level 4 seperately for testing BRAM
 	   level4 
           #(
         .MEM_SIZE(16*1024/*1<<levelId*/),

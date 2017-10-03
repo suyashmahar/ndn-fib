@@ -1,0 +1,5 @@
+; Memory file for instatiating word memory of last level	
+; File for single port ROM of width 32 bits and height
+
+memory_initialization_radix=2;
+memory_initialization_vector=000000;	Initializes a single locations for lvl4

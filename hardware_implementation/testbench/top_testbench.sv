@@ -24,6 +24,7 @@ module top_testbench;
    wire 		   dummy_output_1;
    wire 		   dummy_output_2;
    wire 		   dummy_output_3;
+   wire            dummy_output_4;
    wire 		   debug_address_pipeline_reg_0;
 
    wire [WORD_SIZE - 1 : 0] words_pipeline_3_0;
@@ -46,7 +47,7 @@ module top_testbench;
    
    top
      #(
-       .TREE_HEIGHT(4)
+       .TREE_HEIGHT(5)
        ) dut (
 	      .clk_in(clk),
 	      .name_component(nextName[counter][name_counter]),
@@ -54,16 +55,7 @@ module top_testbench;
 	      .dummy_output_1(dummy_output_1),
 	      .dummy_output_2(dummy_output_2),
 	      .dummy_output_3(dummy_output_3),
-	      
-	      .words_pipeline_3_0(words_pipeline_3_0),
-	      .words_pipeline_3_1(words_pipeline_3_1),
-	      .words_pipeline_3_2(words_pipeline_3_2),
-	      .words_pipeline_3_3(words_pipeline_3_3),
-	      .words_pipeline_3_4(words_pipeline_3_4),
-	      .words_pipeline_3_5(words_pipeline_3_5),
-	      .words_pipeline_3_6(words_pipeline_3_6),
-	      .words_pipeline_3_7(words_pipeline_3_7),
-
+	      .dummy_output_4(dummy_output_4),
 	      
 	      // Wires for debugging stride count
 	      .stageStrideIndex_0(stageStrideIndex_0),
