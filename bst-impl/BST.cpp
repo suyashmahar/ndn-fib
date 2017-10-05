@@ -269,8 +269,8 @@ std::vector<std::string> getComponents(std::string name, int strideLen) {
   }
 }
 
-int main() {
-  std::cout << "====================================================" << std::endl;
+int main(int argc, char *argv[]) {
+  std::cout << "~===================================================" << std::endl;
   bst newTree;
   // newTree.add(stringToULong("c"));
   // newTree.add(stringToULong("au"));
@@ -281,7 +281,15 @@ int main() {
 
   // <>================================
   std::cout << "Starting analysis:" << std::endl;
+
+  // File name for dataset to process
   std::string FILE_NAME = "/home/suyash/Documents/GitHub/ndn-pit/datasets/temp";
+
+  // Changes file name to passed argument if present 
+  if (argc > 1) {
+    FILE_NAME = argv[1];
+  }
+  
   std::ifstream file(FILE_NAME);
 
   std::string line;
