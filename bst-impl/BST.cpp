@@ -281,7 +281,8 @@ int main() {
 
   // <>================================
   std::cout << "Starting analysis:" << std::endl;
-  std::ifstream file("/home/suyash/Documents/GitHub/ndn-pit/datasets/1Mdataset.unique.trim.fib");
+  std::string FILE_NAME = "/home/suyash/Documents/GitHub/ndn-pit/datasets/temp";
+  std::ifstream file(FILE_NAME);
 
   std::string line;
   int lineCount = 0;
@@ -290,7 +291,8 @@ int main() {
 
   
   node* root = newTree.add(0000); 
-   
+  const int WORD_SIZE = 8;
+  
   while (std::getline(file, line)) {
   // while (1==1){
     // std::cout << "processing line: " << line << "\k";
@@ -306,7 +308,7 @@ int main() {
     std::vector<long> strideCollection;
     for (unsigned int i = 0; i < line.length(); i++) {
       char curChar = line[i];
-      if (strideLen >= 5) {
+      if (strideLen >= WORD_SIZE) {
 	strideLen = 1;
 	strideCollection.push_back(stringToULong(nextStride.str().c_str()));
 	// newTree.add(stringToULong(nextStride.str().c_str()));
@@ -352,7 +354,8 @@ int main() {
   //std::cout << "Postorder traversal : " << newTree.postOrderTraversal() << std::endl;
   //std::cout << "Preorder traversal : " << newTree.preOrderTraversal() << std::endl;
   //std::cout << "InOrder traversal : " << newTree.inOrderTraversal() << std::endl;
-
+  std::cout << "Tree constructed using stride size : " << WORD_SIZE << std::endl;
+  std::cout << "Using dataset : \n\t\t" << FILE_NAME << std::endl;
   std::cout << "Lines processed : " << lineCount << std::endl;
   std::cout << "Total number of nodes : " << newTree.nodeCount(newTree.root) << std::endl;
   std::cout << "Height of the tree : " << newTree.height(newTree.root) << std::endl;
@@ -361,7 +364,7 @@ int main() {
   std::cout << std::endl << "Here\'s a tree for you" << std::endl << std::endl;
   
   // Uncomment following line to print tree
-  //newTree.postorderPrint(newTree.root, 0);
+  // newTree.postorderPrint(newTree.root, 0);
 
   std::cout << std::endl;
 
@@ -379,5 +382,10 @@ int main() {
   //newTree.postorderPrint(newTree.root, 0);
     
   std::cout << "====================================================" << std::endl;
+  int a = 0;
+  std::cin >> a;
+  if (a == 0) {
+    newTree.postorderPrint(newTree.root, 0);
+  }
   std::cout << std::endl;
 }
