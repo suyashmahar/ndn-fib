@@ -299,8 +299,11 @@ int main(int argc, char *argv[]) {
 
   
   node* root = newTree.add(0000); 
-  const int WORD_SIZE = 8;
-  
+  int WORD_SIZE = 8;
+  if (argc > 2) {
+    WORD_SIZE = std::atoi(argv[2]);
+  }
+      
   while (std::getline(file, line)) {
   // while (1==1){
     // std::cout << "processing line: " << line << "\k";
@@ -390,10 +393,10 @@ int main(int argc, char *argv[]) {
   //newTree.postorderPrint(newTree.root, 0);
     
   std::cout << "====================================================" << std::endl;
-  int a = 0;
-  std::cin >> a;
-  if (a == 0) {
-    newTree.postorderPrint(newTree.root, 0);
-  }
+  int a = 1;
+  // std::cin >> a;
+  // if (a == 0) {
+  //  newTree.postorderPrint(newTree.root, 0);
+  // }
   std::cout << std::endl;
 }
