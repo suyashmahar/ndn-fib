@@ -75,6 +75,7 @@ class bst{
         void postorderPrint(node* p, int indent=0);
         bool search(node *ref, unsigned long element);
         unsigned long nodeCount(node *ref);
+        int maxWidth(node *ref);
         unsigned long height(node *ref);
         void mirror(node *ref);
 
