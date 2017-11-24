@@ -16,31 +16,21 @@ parameter STRIDE_INDEX_SIZE = 3;
     parameter MAX_NAME_LENGTH = 8 // max length of name in words
     )(
       input 				      clk_in,
-      input [WORD_SIZE - 1 : 0] 	      name_component,
-      
+      input [WORD_SIZE - 1 : 0] 	      name_component_1,
+      input [WORD_SIZE - 1 : 0] 	      name_component_2,
+  
       // Inputs for forcing vivado to use RAMS for memories
       input wire 			      fake_word_in,
       input wire 			      fake_add_in,
       input wire 			      fake_input_write_address,
       // --------------------------------------------------
-      
+  
       output wire 			      dummy_output_0,
       output wire 			      dummy_output_1,
       output wire 			      dummy_output_2,
-      output wire                 dummy_output_3,
-      output wire                 dummy_output_4,
-      
-      // // Outputs for debuging pipeline stages
-      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_0,
-      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_1,
-      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_2,
-      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_3,
-      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_4,
-      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_5,
-      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_6,
-      // output wire [WORD_SIZE - 1 : 0] 	      words_pipeline_3_7, 
-      // // -------------------------------------
-
+      output wire 			      dummy_output_3,
+      output wire 			      dummy_output_4,
+  
       // Outputs for debugging stride count
       output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_0,
       output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_1,
@@ -59,43 +49,37 @@ parameter STRIDE_INDEX_SIZE = 3;
   
       output wire [POINTER_SIZE - 1 : 0]      debug_address_pipeline_reg_0
       );
-   reg [WORD_SIZE - 1 : 0] 		      next_name_in [MAX_NAME_LENGTH - 1 : 0];
-   wire 				      matchBool [TREE_HEIGHT - 1 : 0];
+
+   // Pipeline 1   
+   reg [WORD_SIZE - 1 : 0] 		      next_name_in_1 [MAX_NAME_LENGTH - 1 : 0];
+   wire 				      matchBool_1 [TREE_HEIGHT - 1 : 0];
+   
+   // Pipeline 2
+   reg [WORD_SIZE - 1 : 0] 		      next_name_in_2 [MAX_NAME_LENGTH - 1 : 0];
+   wire 				      matchBool_2 [TREE_HEIGHT - 1 : 0];
 
    assign clk_mod = clk;
    
-   assign dummy_output_0 = matchBool[0];
-   assign dummy_output_1 = matchBool[1];
-   assign dummy_output_2 = matchBool[2];
-   assign dummy_output_3 = matchBool[3];
-   assign dummy_output_4 = matchBool[4];
+   assign dummy_output_0 = matchBool_1[0];
+   assign dummy_output_1 = matchBool_1[1];
+   assign dummy_output_2 = matchBool_1[2];
+   assign dummy_output_3 = matchBool_1[3];
+   assign dummy_output_4 = matchBool_1[4];
    
-   assign debug_address_pipeline_reg_0 = addressPipelineReg[1];
-   
-
-   // // Assignments for words_pipelining
-   // assign words_pipeline_3_0 = wordsPiplineReg[3][0];
-   // assign words_pipeline_3_1 = wordsPiplineReg[3][1];
-   // assign words_pipeline_3_2 = wordsPiplineReg[3][2];
-   // assign words_pipeline_3_3 = wordsPiplineReg[3][3];
-   // assign words_pipeline_3_4 = wordsPiplineReg[3][4];
-   // assign words_pipeline_3_5 = wordsPiplineReg[3][5];
-   // assign words_pipeline_3_6 = wordsPiplineReg[3][6];
-   // assign words_pipeline_3_7 = wordsPiplineReg[3][7];
-   // // --------------------------------
+   assign debug_address_pipeline_reg_0 = addressPipelineReg_1[1];
    
    // assignement for debugging stride count
-   assign stageStrideIndex_0 = stageStrideIndex[0];
-   assign stageStrideIndex_1 = stageStrideIndex[1];
-   assign stageStrideIndex_2 = stageStrideIndex[2];
-   assign stageStrideIndex_3 = stageStrideIndex[3];
+   assign stageStrideIndex_0 = stageStrideIndex_1[0];
+   assign stageStrideIndex_1 = stageStrideIndex_1[1];
+   assign stageStrideIndex_2 = stageStrideIndex_1[2];
+   assign stageStrideIndex_3 = stageStrideIndex_1[3];
    //--------------------------------------
 
    // assignment statements for debugging level memory
-   assign word_mem_loc_read_0 = word_mem_loc_read[0];
-   assign word_mem_loc_read_1 = word_mem_loc_read[1];
-   assign word_mem_loc_read_2 = word_mem_loc_read[2];
-   assign word_mem_loc_read_3 = word_mem_loc_read[3];
+   assign word_mem_loc_read_0 = word_mem_loc_read_1[0];
+   assign word_mem_loc_read_1 = word_mem_loc_read_1[1];
+   assign word_mem_loc_read_2 = word_mem_loc_read_1[2];
+   assign word_mem_loc_read_3 = word_mem_loc_read_1[3];
    
    
    reg 					      clk = 0;			// Real clock for the module
@@ -113,29 +97,48 @@ parameter STRIDE_INDEX_SIZE = 3;
    end
 
    integer accumulator_counter = 0;
-   
+
    always @(posedge flipper) begin
-       next_name_in[accumulator_counter] = name_component;
+       // Pipeline 1
+       next_name_in_1[accumulator_counter] = name_component_1;
+       
+       // Pipeline 2
+       next_name_in_2[accumulator_counter] = name_component_2;
+
        accumulator_counter = (accumulator_counter+1)%MAX_NAME_LENGTH;
    end
    
-   wire [STRIDE_INDEX_SIZE - 1 : 0]    stage_output [TREE_HEIGHT - 1 : 0];
+   wire [STRIDE_INDEX_SIZE - 1 : 0]    stage_output_1 [TREE_HEIGHT - 1 : 0];
+   wire [STRIDE_INDEX_SIZE - 1 : 0]    stage_output_2 [TREE_HEIGHT - 1 : 0];
    
-   assign stage_output = stageStrideIndex;
+   assign stage_output = stageStrideIndex_1;
    
    // Signals for module
-   (*DONT_TOUCH = "true"*) reg [WORD_SIZE - 1 : 0] 	       wordsPiplineReg [TREE_HEIGHT - 1 : 0] [MAX_NAME_LENGTH - 1 : 0];
-   (*DONT_TOUCH = "true"*) reg [POINTER_SIZE - 1 : 0] 		      addressPipelineReg [TREE_HEIGHT - 1 : 0];
-   (*DONT_TOUCH = "true"*) reg [STRIDE_INDEX_SIZE - 1 : 0] 	      stageStrideIndex [TREE_HEIGHT - 1 : 0];
+   // Pipeline 2
+   (*DONT_TOUCH = "true"*) reg [WORD_SIZE - 1 : 0] 	       wordsPiplineReg_1 [TREE_HEIGHT - 1 : 0] [MAX_NAME_LENGTH - 1 : 0];
+   (*DONT_TOUCH = "true"*) reg [POINTER_SIZE - 1 : 0] 		      addressPipelineReg_1 [TREE_HEIGHT - 1 : 0];
+   (*DONT_TOUCH = "true"*) reg [STRIDE_INDEX_SIZE - 1 : 0] 	      stageStrideIndex_1 [TREE_HEIGHT - 1 : 0];
 
-   
-   wire [POINTER_SIZE - 1 : 0] 	       addressPipelineOut [TREE_HEIGHT - 1 : 0];
-   wire 			       noChildBool [TREE_HEIGHT - 1 : 0];
+   // Pipeline 2
+   (*DONT_TOUCH = "true"*) reg [WORD_SIZE - 1 : 0] 	       wordsPiplineReg_2 [TREE_HEIGHT - 1 : 0] [MAX_NAME_LENGTH - 1 : 0];
+   (*DONT_TOUCH = "true"*) reg [POINTER_SIZE - 1 : 0] 		      addressPipelineReg_2 [TREE_HEIGHT - 1 : 0];
+   (*DONT_TOUCH = "true"*) reg [STRIDE_INDEX_SIZE - 1 : 0] 	      stageStrideIndex_2 [TREE_HEIGHT - 1 : 0];
+
+
+   // Pipeline 1   
+   wire [POINTER_SIZE - 1 : 0] 	       addressPipelineOut_1 [TREE_HEIGHT - 1 : 0];
+   wire 			       noChildBool_1 [TREE_HEIGHT - 1 : 0];
+
+   // Pipeline 2
+   wire [POINTER_SIZE - 1 : 0] 	       addressPipelineOut_2 [TREE_HEIGHT - 1 : 0];
+   wire 			       noChildBool_2 [TREE_HEIGHT - 1 : 0];
 
    wire 			       dummy_signal_inter_0;
    wire 			       dummy_signal_inter_1;
    wire 			       dummy_signal_inter_2;
-   wire [WORD_SIZE - 1 : 0] 	       word_mem_loc_read [TREE_HEIGHT - 1 : 0];
+   
+   wire [WORD_SIZE - 1 : 0] 	       word_mem_loc_read_1 [TREE_HEIGHT - 1 : 0];
+   wire [WORD_SIZE - 1 : 0] 	       word_mem_loc_read_2 [TREE_HEIGHT - 1 : 0];
    
    integer 			       dummy_loop;
    
@@ -149,54 +152,71 @@ parameter STRIDE_INDEX_SIZE = 3;
 			) level_instance 
 		      (
 		       .clk_in(clk),
-		       .address_in(addressPipelineReg[levelId]),
-		       .lookup_cont_in(wordsPiplineReg[levelId][stageStrideIndex[levelId]]),
-		       .next_lookup_cont_in(wordsPiplineReg[levelId][stageStrideIndex[levelId]+1]),
+		       
+		       // Pipeline 1
+		       .address_in_1(addressPipelineReg_1[levelId]),
+		       .lookup_cont_in_1(wordsPiplineReg_1[levelId][stageStrideIndex_1[levelId]]),
+		       .next_lookup_cont_in_1(wordsPiplineReg_1[levelId][stageStrideIndex_1[levelId]+1]),
+		       
+		       .word_mem_loc_read_1(word_mem_loc_read_1[levelId]),
+		       .next_pointer_out_1(addressPipelineOut_1[levelId]),
+		       .is_match_out_1(matchBool_1[levelId]),
+		       .no_child_out_1(noChildBool_1[levelId]),
+		       
+		       
+		       // Pipeline 2
+		       .address_in_2(addressPipelineReg_2[levelId]),
+		       .lookup_cont_in_2(wordsPiplineReg_2[levelId][stageStrideIndex_2[levelId]]),
+		       .next_lookup_cont_in_2(wordsPiplineReg_2[levelId][stageStrideIndex_2[levelId]+1]),
+		       
+		       .word_mem_loc_read_2(word_mem_loc_read_2[levelId]),
+		       .next_pointer_out_2(addressPipelineOut_2[levelId]),
+		       .is_match_out_2(matchBool_2[levelId]),
+		       .no_child_out_2(noChildBool_2[levelId]),
+		       
 		       // Inputs for forcing vivado to use RAMS for memories
 		       .fake_word_in(fake_word_in),
 		       .fake_add_in(fake_add_in),
-		       .fake_input_write_address(fake_input_write_address),
-		       // --------------------------------------------------
-		       
-		       .word_mem_loc_read(word_mem_loc_read[levelId]),
-		       .next_pointer_out(addressPipelineOut[levelId]),
-		       .is_match_out(matchBool[levelId]),
-		       .no_child_out(noChildBool[levelId])
+		       .fake_input_write_address(fake_input_write_address)
 		       );
        end // for (LevelId = 0; i < TREE_HEIGHT; i++)
    endgenerate
    
    
    // Generate level 4 seperately for testing BRAM
-	   level4 
-          #(
-        .MEM_SIZE(16*1024/*1<<levelId*/),
-        .LEVEL_ID(4)
-        ) level4_i
-          (
-           .clk_in(clk),
-           .address_in(addressPipelineReg[4]),
-           .lookup_cont_in(wordsPiplineReg[4][stageStrideIndex[4]]),
-           .next_lookup_cont_in(wordsPiplineReg[4][stageStrideIndex[4]+1]),
-           // Inputs for forcing vivado to use RAMS for memories
-           .fake_word_in(fake_word_in),
-           .fake_add_in(fake_add_in),
-           .fake_input_write_address(fake_input_write_address),
-           // --------------------------------------------------
-           
-           .word_mem_loc_read(word_mem_loc_read[4]),
-           .next_pointer_out(addressPipelineOut[4]),
-           .is_match_out(matchBool[4]),
-           .no_child_out(noChildBool[4])
-           );
-           
+   level4 
+     #(
+       .MEM_SIZE(16*1024/*1<<levelId*/),
+       .LEVEL_ID(4)
+       ) level4_i
+       (
+        .clk_in(clk),
+	
+        .address_in(addressPipelineReg_1[4]),
+        .lookup_cont_in(wordsPiplineReg_1[4][stageStrideIndex_1[4]]),
+        .next_lookup_cont_in(wordsPiplineReg_1[4][stageStrideIndex_1[4]+1]),
+        
+	// Inputs for forcing vivado to use RAMS for memories
+        .fake_word_in(fake_word_in),
+        .fake_add_in(fake_add_in),
+        .fake_input_write_address(fake_input_write_address),
+        // --------------------------------------------------
+        
+        .word_mem_loc_read(word_mem_loc_read_1[4]),
+        .next_pointer_out(addressPipelineOut_1[4]),
+        .is_match_out(matchBool_1[4]),
+        .no_child_out(noChildBool_1[4])
+        );
+   
    initial begin
       integer loop_var_0, loop_var_1;
        for (loop_var_0 = 0; loop_var_0 < TREE_HEIGHT; loop_var_0++) begin
-	   addressPipelineReg[loop_var_0] = {POINTER_SIZE{1'b0}};
-       end       
-       stageStrideIndex[0] = {STRIDE_INDEX_SIZE{1'b0}};
+	   addressPipelineReg_1[loop_var_0] = {POINTER_SIZE{1'b0}};
+	   addressPipelineReg_2[loop_var_0] = {POINTER_SIZE{1'b0}};
+       end
        
+       stageStrideIndex_1[0] = {STRIDE_INDEX_SIZE{1'b0}};
+       stageStrideIndex_2[0] = {STRIDE_INDEX_SIZE{1'b0}};       
    end
 
    // Moves data between pipeline stages in FIFO order
@@ -204,12 +224,14 @@ parameter STRIDE_INDEX_SIZE = 3;
    always @(posedge clk) begin
        #1 
 	 for (i = 0; i < MAX_NAME_LENGTH; i++) begin
-	     wordsPiplineReg[0][i] <= next_name_in[i];
+	     wordsPiplineReg_1[0][i] <= next_name_in_1[i];
+	     wordsPiplineReg_2[0][i] <= next_name_in_2[i];
 	 end
        
        for (j = 0; j < TREE_HEIGHT - 1; j++) begin
 	   for (m = 0; m < MAX_NAME_LENGTH; m++) begin
-	       wordsPiplineReg[TREE_HEIGHT - 1 - j][m] <= wordsPiplineReg[TREE_HEIGHT - 1 - j - 1][m];
+	       wordsPiplineReg_1[TREE_HEIGHT - 1 - j][m] <= wordsPiplineReg_1[TREE_HEIGHT - 1 - j - 1][m];
+	       wordsPiplineReg_2[TREE_HEIGHT - 1 - j][m] <= wordsPiplineReg_2[TREE_HEIGHT - 1 - j - 1][m];
 	   end
        end
    end
@@ -218,22 +240,32 @@ parameter STRIDE_INDEX_SIZE = 3;
    always @(posedge clk) begin
        #1
 	 for (n = 0; n < TREE_HEIGHT - 1; n++) begin
-	     addressPipelineReg[TREE_HEIGHT - 1 - n] <= addressPipelineOut[TREE_HEIGHT - 1 - n - 1];
+	     addressPipelineReg_1[TREE_HEIGHT - 1 - n] <= addressPipelineOut_1[TREE_HEIGHT - 1 - n - 1];
+	     addressPipelineReg_2[TREE_HEIGHT - 1 - n] <= addressPipelineOut_2[TREE_HEIGHT - 1 - n - 1];
 	 end
    end
    
    // Moves adress between pipeline stages in FIFO order
    integer k;
    always @(posedge clk) begin
-       stageStrideIndex[0] <= {STRIDE_INDEX_SIZE{1'b0}};
+       stageStrideIndex_1[0] <= {STRIDE_INDEX_SIZE{1'b0}};
+       stageStrideIndex_2[0] <= {STRIDE_INDEX_SIZE{1'b0}};
+       
        #1
 	 for (k = 0; k < TREE_HEIGHT-1; k++) begin
-	     if (matchBool[TREE_HEIGHT - 2 - k] == 1'b1) begin
-		 stageStrideIndex[TREE_HEIGHT - 1 - k] <= stageStrideIndex[TREE_HEIGHT - 1 - k - 1] + 1;
+	     if (matchBool_1[TREE_HEIGHT - 2 - k] == 1'b1) begin
+		 stageStrideIndex_1[TREE_HEIGHT - 1 - k] <= stageStrideIndex_1[TREE_HEIGHT - 1 - k - 1] + 1;
 	     end else begin
-		 stageStrideIndex[TREE_HEIGHT - 1 - k] <= stageStrideIndex[TREE_HEIGHT - 1 - k - 1];
+		 stageStrideIndex_1[TREE_HEIGHT - 1 - k] <= stageStrideIndex_1[TREE_HEIGHT - 1 - k - 1];
 	     end
 	 end
+       for (k = 0; k < TREE_HEIGHT-1; k++) begin
+	   if (matchBool_2[TREE_HEIGHT - 2 - k] == 1'b1) begin
+	       stageStrideIndex_2[TREE_HEIGHT - 1 - k] <= stageStrideIndex_2[TREE_HEIGHT - 1 - k - 1] + 1;
+	   end else begin
+	       stageStrideIndex_2[TREE_HEIGHT - 1 - k] <= stageStrideIndex_2[TREE_HEIGHT - 1 - k - 1];
+	   end
+       end
    end // always @ (posedge clk)
 endmodule // top
 

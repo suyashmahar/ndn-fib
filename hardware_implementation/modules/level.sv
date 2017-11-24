@@ -4,7 +4,7 @@
  working of a level:
  1. all the hexadecimal content is loaded from a file to read
  2. there are three types of memory first contains strides,
-    second and third contains pointer addresses for left and right pointer respectively.
+ second and third contains pointer addresses for left and right pointer respectively.
  3. level then receives a single address and a single data corresponding to search
  4. After recieving the data next address is returned along with a signal that indicates if a match occured or not
  */
@@ -20,27 +20,54 @@ parameter MAX_NAME_LENGTH = 8; // max length of name in words
     parameter LEVEL_ID = 1
     )( 
        input 				 clk_in,
-       input [POINTER_SIZE - 1 : 0] 	 address_in,
-       input [WORD_SIZE - 1 : 0] 	 lookup_cont_in,
-       input [WORD_SIZE - 1 : 0] 	 next_lookup_cont_in,
-       input [WORD_SIZE - 1 : 0] 	 fake_word_in, // Input that forces vivado to use BRAM for all memories 
-       input [POINTER_SIZE - 1 : 0] 	 fake_add_in, 
-       input [POINTER_SIZE - 1 : 0] 	 fake_input_write_address,
 
-       output wire [WORD_SIZE - 1 : 0] 	 word_mem_loc_read,
-         
-       output reg [POINTER_SIZE - 1 : 0] next_pointer_out,
-       output wire 			 is_match_out,
-       output reg 			 no_child_out);
-   (*DONT_TOUCH = "true"*)reg [31:0] sample_RAM [4095:0];
+       // Input for first lookup logic
+       input [POINTER_SIZE - 1 : 0] 	 address_in_1,
+       input [WORD_SIZE - 1 : 0] 	 lookup_cont_in_1,
+       input [WORD_SIZE - 1 : 0] 	 next_lookup_cont_in_1,
+  
+       output wire [WORD_SIZE - 1 : 0] 	 word_mem_loc_read_1,
+  
+       output reg [POINTER_SIZE - 1 : 0] next_pointer_out_1,
+       output wire 			 is_match_out_1,
+       output reg 			 no_child_out_1,
+
+       // Input for second pipeline
+       input [POINTER_SIZE - 1 : 0] 	 address_in_2,
+       input [WORD_SIZE - 1 : 0] 	 lookup_cont_in_2,
+       input [WORD_SIZE - 1 : 0] 	 next_lookup_cont_in_2,
+  
+       output wire [WORD_SIZE - 1 : 0] 	 word_mem_loc_read_2,
+  
+       output reg [POINTER_SIZE - 1 : 0] next_pointer_out_2,
+       output wire 			 is_match_out_2,
+       output reg 			 no_child_out_2,
+
+       // Input that forces vivado to use BRAM for all memories
+       input [WORD_SIZE - 1 : 0] 	 fake_word_in,
+       input [POINTER_SIZE - 1 : 0] 	 fake_add_in,
+       input [POINTER_SIZE - 1 : 0] 	 fake_input_write_address
+       );
    
-   (* ram_style = "ultra" *)reg [WORD_SIZE - 1 : 0] 		 word_mem [0 : MEM_SIZE - 1];
-   (*DONT_TOUCH = "true"*)reg [POINTER_SIZE - 1 : 0] 		 left_pointer_mem [0 : MEM_SIZE - 1];
-   (*DONT_TOUCH = "true"*)reg [POINTER_SIZE - 1 : 0] 		 right_pointer_mem [0 : MEM_SIZE - 1];
-   (*DONT_TOUCH = "true"*)reg 					 left_pointer_valid_bits [0 : MEM_SIZE - 1];
-   (*DONT_TOUCH = "true"*)reg 					 right_pointer_valid_bits [0 : MEM_SIZE - 1];
+   
+   (*DONT_TOUCH = "true"*)reg [31:0] sample_RAM [4095:0];
+
+   // Memory resources for first pipeline
+   (* ram_style = "ultra" *)reg [WORD_SIZE - 1 : 0] 		 word_mem_1 [0 : MEM_SIZE - 1];
+   (*DONT_TOUCH = "true"*)reg [POINTER_SIZE - 1 : 0] 		 left_pointer_mem_1 [0 : MEM_SIZE - 1];
+   (*DONT_TOUCH = "true"*)reg [POINTER_SIZE - 1 : 0] 		 right_pointer_mem_1 [0 : MEM_SIZE - 1];
+   (*DONT_TOUCH = "true"*)reg 					 left_pointer_valid_bits_1 [0 : MEM_SIZE - 1];
+   (*DONT_TOUCH = "true"*)reg 					 right_pointer_valid_bits_1 [0 : MEM_SIZE - 1];
+   
+   // Memory resources for first pipeline
+   (* ram_style = "ultra" *)reg [WORD_SIZE - 1 : 0] 		 word_mem_2 [0 : MEM_SIZE - 1];
+   (*DONT_TOUCH = "true"*)reg [POINTER_SIZE - 1 : 0] 		 left_pointer_mem_2 [0 : MEM_SIZE - 1];
+   (*DONT_TOUCH = "true"*)reg [POINTER_SIZE - 1 : 0] 		 right_pointer_mem_2 [0 : MEM_SIZE - 1];
+   (*DONT_TOUCH = "true"*)reg 					 left_pointer_valid_bits_2 [0 : MEM_SIZE - 1];
+   (*DONT_TOUCH = "true"*)reg 					 right_pointer_valid_bits_2 [0 : MEM_SIZE - 1];
    
    integer 				 i = 0; // Handles loops
+   
    /* 
     Loads data into memory from following files:
     Memory words: data/level#.dat
@@ -48,60 +75,115 @@ parameter MAX_NAME_LENGTH = 8; // max length of name in words
     Right pointer addresses: data/level#_rp.dat
     */
    integer 				 t = 0;
-   
    initial begin
+
+       // Set all memory content to 0
        for (int t = 2; t < MEM_SIZE; t++) begin
-	   word_mem[t] = {WORD_SIZE{1'b0}};
-	   left_pointer_mem[t] = {POINTER_SIZE{1'b0}};
-	   right_pointer_mem[t] = {POINTER_SIZE{1'b0}};
-	   right_pointer_valid_bits[t] = {1'b0};
-	   left_pointer_valid_bits[t] = {1'b0};
-       end
+	   // First pipeline
+	   word_mem_1[t] = {WORD_SIZE{1'b0}};
+	   left_pointer_mem_1[t] = {POINTER_SIZE{1'b0}};
+	   right_pointer_mem_1[t] = {POINTER_SIZE{1'b0}};
+	   right_pointer_valid_bits_1[t] = {1'b0};
+	   left_pointer_valid_bits_1[t] = {1'b0};
+
+	   // First pipeline
+	   word_mem_2[t] = {WORD_SIZE{1'b0}};
+	   left_pointer_mem_2[t] = {POINTER_SIZE{1'b0}};
+	   right_pointer_mem_2[t] = {POINTER_SIZE{1'b0}};
+	   right_pointer_valid_bits_2[t] = {1'b0};
+	   left_pointer_valid_bits_2[t] = {1'b0};
+       end // for (int t = 2; t < MEM_SIZE; t++)
+       
        $display(LEVEL_ID);
+
+       // Load first pipeline
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/level", {LEVEL_ID+1{"_"}}, ".dat"}, word_mem_1);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_mem_1);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_mem_1);
        
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, ".dat"}, word_mem);
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_mem);
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_mem);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/vb_level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_valid_bits_1);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/vb_level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_valid_bits_1);
+
+       // Load second pipeline
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/2/level", {LEVEL_ID+1{"_"}}, ".dat"}, word_mem_2);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/2/level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_mem_2);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/2/level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_mem_2);
        
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/vb_level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_valid_bits);
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/vb_level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_valid_bits);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/2/vb_level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_valid_bits_2);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/2/vb_level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_valid_bits_2);
    end // initial begin
 
-   reg [WORD_SIZE - 1 : 0] mem_read_val_loc;
-   reg [WORD_SIZE - 1 : 0] left_mem_res;
-   reg [WORD_SIZE - 1 : 0] right_mem_res;
-   
+   // Variables to handle intermediate data
+   // Pipeline 1
+   reg [WORD_SIZE - 1 : 0] mem_read_val_loc_1;
+   reg [WORD_SIZE - 1 : 0] left_mem_res_1;
+   reg [WORD_SIZE - 1 : 0] right_mem_res_1;
 
-   wire [POINTER_SIZE - 1 : 0] next_pointer_match;
-   wire [POINTER_SIZE - 1 : 0] next_pointer_no_match;
+   wire [POINTER_SIZE - 1 : 0] next_pointer_match_1;
+   wire [POINTER_SIZE - 1 : 0] next_pointer_no_match_1;
    
-   assign word_mem_loc_read =  mem_read_val_loc;
-   assign is_match_out = (word_mem_loc_read == lookup_cont_in) ? 1'b1 : 1'b0;
+   assign word_mem_loc_read_1 =  mem_read_val_loc_1;
+   assign is_match_out_1 = (word_mem_loc_read_1 == lookup_cont_in_1) ? 1'b1 : 1'b0;
 
-   assign next_pointer_no_match = (lookup_cont_in < word_mem_loc_read) ?  left_pointer_mem[address_in] : right_pointer_mem[address_in];
-   assign next_pointer_match = (next_lookup_cont_in <= lookup_cont_in) ? left_pointer_mem[address_in] : right_pointer_mem[address_in];
-   assign next_pointer_out = (lookup_cont_in == word_mem_loc_read) ?  next_pointer_match : next_pointer_no_match;
+   assign next_pointer_no_match_1 = (lookup_cont_in_1 < word_mem_loc_read_1) ?  left_pointer_mem_1[address_in_1] : right_pointer_mem_1[address_in_1];
+   assign next_pointer_match_1 = (next_lookup_cont_in_1 <= lookup_cont_in_1) ? left_pointer_mem_1[address_in_1] : right_pointer_mem_1[address_in_1];
+   assign next_pointer_out_1 = (lookup_cont_in_1 == word_mem_loc_read_1) ?  next_pointer_match_1 : next_pointer_no_match_1;
+
    
+   // Pipeline 2
+   reg [WORD_SIZE - 1 : 0]     mem_read_val_loc_2;
+   reg [WORD_SIZE - 1 : 0]     left_mem_res_2;
+   reg [WORD_SIZE - 1 : 0]     right_mem_res_2;
+
+   wire [POINTER_SIZE - 1 : 0] next_pointer_match_2;
+   wire [POINTER_SIZE - 1 : 0] next_pointer_no_match_2;
+   
+   assign word_mem_loc_read_2 =  mem_read_val_loc_2;
+   assign is_match_out_2 = (word_mem_loc_read_2 == lookup_cont_in_2) ? 1'b1 : 1'b0;
+
+   assign next_pointer_no_match_2 = (lookup_cont_in_2 < word_mem_loc_read_2) ?  left_pointer_mem_2[address_in_2] : right_pointer_mem_2[address_in_2];
+   assign next_pointer_match_2 = (next_lookup_cont_in_2 <= lookup_cont_in_2) ? left_pointer_mem_2[address_in_2] : right_pointer_mem_2[address_in_2];
+   assign next_pointer_out_2 = (lookup_cont_in_2 == word_mem_loc_read_2) ?  next_pointer_match_2 : next_pointer_no_match_2;
+
+   // Pipeline 1
    always @(negedge clk_in) begin
        #26
-       mem_read_val_loc = word_mem[address_in];
-       left_mem_res = left_pointer_mem[address_in];
-       right_mem_res = right_pointer_mem[address_in];
+	 mem_read_val_loc_1 = word_mem_1[address_in_1];
+       left_mem_res_1 = left_pointer_mem_1[address_in_1];
+       right_mem_res_1 = right_pointer_mem_1[address_in_1];
        
-       if (lookup_cont_in == mem_read_val_loc) begin
-	   no_child_out = 1'b0;
+       if (lookup_cont_in_1 == mem_read_val_loc_1) begin
+	   no_child_out_1 = 1'b0;
        end else begin
-	   if (lookup_cont_in <= mem_read_val_loc) begin
-	       no_child_out = ~left_pointer_valid_bits[address_in];
+	   if (lookup_cont_in_1 <= mem_read_val_loc_1) begin
+	       no_child_out_1 = ~left_pointer_valid_bits_1[address_in_1];
 	   end else begin
-	       no_child_out = ~right_pointer_valid_bits[address_in];
+	       no_child_out_1 = ~right_pointer_valid_bits_1[address_in_1];
 	   end
-       end // else: !if(lookup_cont_in == mem[address_in])
+       end // else: !if(lookup_cont_in_1 == mem[address_in_1])
        
        // Fake logic to force vivado to use BRAM for memories instead of registers
-       word_mem[fake_input_write_address] = fake_word_in;
-       left_pointer_mem[fake_input_write_address] = fake_add_in;
-       right_pointer_mem[fake_input_write_address] = fake_add_in;       
+       word_mem_1[fake_input_write_address] = fake_word_in;
+       left_pointer_mem_1[fake_input_write_address] = fake_add_in;
+       right_pointer_mem_1[fake_input_write_address] = fake_add_in;
+   end // always @ (negedge clk_in)
+   
+   // Pipeline 2
+   always @(negedge clk_in) begin
+       #26
+	 mem_read_val_loc_2 = word_mem_2[address_in_2];
+       left_mem_res_2 = left_pointer_mem_2[address_in_2];
+       right_mem_res_2 = right_pointer_mem_2[address_in_2];
+       
+       if (lookup_cont_in_2 == mem_read_val_loc_2) begin
+	   no_child_out_2 = 1'b0;
+       end else begin
+	   if (lookup_cont_in_2 <= mem_read_val_loc_2) begin
+	       no_child_out_2 = ~left_pointer_valid_bits_2[address_in_2];
+	   end else begin
+	       no_child_out_2 = ~right_pointer_valid_bits_2[address_in_2];
+	   end
+       end
    end
    
 endmodule
