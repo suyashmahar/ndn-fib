@@ -32,17 +32,17 @@ parameter STRIDE_INDEX_SIZE = 3;
       output wire 			      dummy_output_4,
   
       // Outputs for debugging stride count
-      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_0,
-      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_1,
-      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_2,
-      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_3,
+      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_0_out,
+      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_1_out,
+      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_2_out,
+      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_3_out,
       //--------------------------------------
 
       // Debugging level memory read
-      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_0,
-      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_1,
-      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_2,
-      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_3,
+      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_0_out,
+      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_1_out,
+      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_2_out,
+      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_3_out,
       //------------------------------
 
       output wire 			      clk_mod,
@@ -69,17 +69,17 @@ parameter STRIDE_INDEX_SIZE = 3;
    assign debug_address_pipeline_reg_0 = addressPipelineReg_1[1];
    
    // assignement for debugging stride count
-   assign stageStrideIndex_0 = stageStrideIndex_1[0];
-   assign stageStrideIndex_1 = stageStrideIndex_1[1];
-   assign stageStrideIndex_2 = stageStrideIndex_1[2];
-   assign stageStrideIndex_3 = stageStrideIndex_1[3];
+   assign stageStrideIndex_0_out = stageStrideIndex_1[0];
+   assign stageStrideIndex_1_out = stageStrideIndex_1[1];
+   assign stageStrideIndex_2_out = stageStrideIndex_1[2];
+   assign stageStrideIndex_3_out = stageStrideIndex_1[3];
    //--------------------------------------
 
    // assignment statements for debugging level memory
-   assign word_mem_loc_read_0 = word_mem_loc_read_1[0];
-   assign word_mem_loc_read_1 = word_mem_loc_read_1[1];
-   assign word_mem_loc_read_2 = word_mem_loc_read_1[2];
-   assign word_mem_loc_read_3 = word_mem_loc_read_1[3];
+   assign word_mem_loc_read_0_out = word_mem_loc_read_1[0];
+   assign word_mem_loc_read_1_out = word_mem_loc_read_1[1];
+   assign word_mem_loc_read_2_out = word_mem_loc_read_1[2];
+   assign word_mem_loc_read_3_out = word_mem_loc_read_1[3];
    
    
    reg 					      clk = 0;			// Real clock for the module
@@ -111,7 +111,6 @@ parameter STRIDE_INDEX_SIZE = 3;
    wire [STRIDE_INDEX_SIZE - 1 : 0]    stage_output_1 [TREE_HEIGHT - 1 : 0];
    wire [STRIDE_INDEX_SIZE - 1 : 0]    stage_output_2 [TREE_HEIGHT - 1 : 0];
    
-   assign stage_output = stageStrideIndex_1;
    
    // Signals for module
    // Pipeline 2
@@ -124,6 +123,8 @@ parameter STRIDE_INDEX_SIZE = 3;
    (*DONT_TOUCH = "true"*) reg [POINTER_SIZE - 1 : 0] 		      addressPipelineReg_2 [TREE_HEIGHT - 1 : 0];
    (*DONT_TOUCH = "true"*) reg [STRIDE_INDEX_SIZE - 1 : 0] 	      stageStrideIndex_2 [TREE_HEIGHT - 1 : 0];
 
+   assign stage_output_1 = stageStrideIndex_1;
+   assign stage_output_2 = stageStrideIndex_2;
 
    // Pipeline 1   
    wire [POINTER_SIZE - 1 : 0] 	       addressPipelineOut_1 [TREE_HEIGHT - 1 : 0];
@@ -192,20 +193,30 @@ parameter STRIDE_INDEX_SIZE = 3;
        (
         .clk_in(clk),
 	
-        .address_in(addressPipelineReg_1[4]),
-        .lookup_cont_in(wordsPiplineReg_1[4][stageStrideIndex_1[4]]),
-        .next_lookup_cont_in(wordsPiplineReg_1[4][stageStrideIndex_1[4]+1]),
+        .address_in_1(addressPipelineReg_1[4]),
+        .lookup_cont_in_1(wordsPiplineReg_1[4][stageStrideIndex_1[4]]),
+        .next_lookup_cont_in_1(wordsPiplineReg_1[4][stageStrideIndex_1[4]+1]),
+        .word_mem_loc_read_1(word_mem_loc_read_1[4]),
+        .next_pointer_out_1(addressPipelineOut_1[4]),
+        .is_match_out_1(matchBool_1[4]),
+        .no_child_out_1(noChildBool_1[4]),
+	
+	
+        .address_in_2(addressPipelineReg_2[4]),
+        .lookup_cont_in_2(wordsPiplineReg_2[4][stageStrideIndex_2[4]]),
+        .next_lookup_cont_in_2(wordsPiplineReg_2[4][stageStrideIndex_2[4]+1]),
+        .word_mem_loc_read_2(word_mem_loc_read_2[4]),
+        .next_pointer_out_2(addressPipelineOut_2[4]),
+        .is_match_out_2(matchBool_2[4]),
+        .no_child_out_2(noChildBool_2[4]),
+	
         
 	// Inputs for forcing vivado to use RAMS for memories
         .fake_word_in(fake_word_in),
         .fake_add_in(fake_add_in),
-        .fake_input_write_address(fake_input_write_address),
+        .fake_input_write_address(fake_input_write_address)
         // --------------------------------------------------
         
-        .word_mem_loc_read(word_mem_loc_read_1[4]),
-        .next_pointer_out(addressPipelineOut_1[4]),
-        .is_match_out(matchBool_1[4]),
-        .no_child_out(noChildBool_1[4])
         );
    
    initial begin

@@ -3,7 +3,8 @@
 `timescale 1ns/1ps
 
 module top_testbench;
-   parameter DATA_FILE_NAME = "/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/names_data.dat";
+   parameter DATA_FILE_NAME_1 = "/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/names_data.dat";
+   parameter DATA_FILE_NAME_2 = "/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/2/names_data.dat";
    parameter WORD_SIZE = 32;
    parameter TREE_HEIGHT = 4;
    parameter POINTER_SIZE = 6;
@@ -24,7 +25,7 @@ module top_testbench;
    wire 		   dummy_output_1;
    wire 		   dummy_output_2;
    wire 		   dummy_output_3;
-   wire            dummy_output_4;
+   wire 		   dummy_output_4;
    wire 		   debug_address_pipeline_reg_0;
 
    wire [WORD_SIZE - 1 : 0] words_pipeline_3_0;
@@ -50,7 +51,10 @@ module top_testbench;
        .TREE_HEIGHT(5)
        ) dut (
 	      .clk_in(clk),
-	      .name_component(nextName[counter][name_counter]),
+	      
+	      .name_component_1(nextName[counter][name_counter]),
+	      .name_component_2(nextName[counter][name_counter]),
+	      
 	      .dummy_output_0(dummy_output_0),
 	      .dummy_output_1(dummy_output_1),
 	      .dummy_output_2(dummy_output_2),
@@ -58,10 +62,10 @@ module top_testbench;
 	      .dummy_output_4(dummy_output_4),
 	      
 	      // Wires for debugging stride count
-	      .stageStrideIndex_0(stageStrideIndex_0),
-	      .stageStrideIndex_1(stageStrideIndex_1),
-	      .stageStrideIndex_2(stageStrideIndex_2),
-	      .stageStrideIndex_3(stageStrideIndex_3),
+	      .stageStrideIndex_0_out(stageStrideIndex_0),
+	      .stageStrideIndex_1_out(stageStrideIndex_1),
+	      .stageStrideIndex_2_out(stageStrideIndex_2),
+	      .stageStrideIndex_3_out(stageStrideIndex_3),
 	      //--------------------------------------
 	      
 	      .debug_address_pipeline_reg_0(debug_address_pipeline_reg_0)
@@ -76,11 +80,11 @@ module top_testbench;
    
    logic   signed [21:0] 	    captured_data;
    initial begin
-       data_file = $fopen("/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/names_data_mod.dat", "r");
+       data_file = $fopen("/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/names_data_mod.dat", "r");
        for (i = 0; i < 9; i++) begin
-	   for (j = 0; j < 8; j++) begin
-	       scan_file = $fscanf(data_file, "%x", nextName[i][j]);
-	   end
+//	   for (j = 0; j < 8; j++) begin
+	       scan_file = $fscanf(data_file, "%x", nextName[i]);
+//	   end
        end
        clk = 0;
        
