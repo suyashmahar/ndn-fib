@@ -16,7 +16,8 @@ module top_testbench;
 
    // Module variables
    reg 	   clk;
-   reg [WORD_SIZE - 1 : 0] nextName [7 : 0][MAX_NAME_LENGTH - 1 : 0];
+   reg [WORD_SIZE - 1 : 0] nextName_1 [7 : 0][MAX_NAME_LENGTH - 1 : 0];
+   reg [WORD_SIZE - 1 : 0] nextName_2 [7 : 0][MAX_NAME_LENGTH - 1 : 0];
    wire 		   matchBool [TREE_HEIGHT - 1 : 0];
    
    integer 		   name_counter = 0;
@@ -52,8 +53,8 @@ module top_testbench;
        ) dut (
 	      .clk_in(clk),
 	      
-	      .name_component_1(nextName[counter][name_counter]),
-	      .name_component_2(nextName[counter][name_counter]),
+	      .name_component_1(nextName_1[counter][7-name_counter]),
+	      .name_component_2(nextName_2[counter][7-name_counter]),
 	      
 	      .dummy_output_0(dummy_output_0),
 	      .dummy_output_1(dummy_output_1),
@@ -74,17 +75,19 @@ module top_testbench;
    
    reg [WORD_SIZE - 1 : 0] 	    result;
    
-   integer 			    data_file    ; // file handler
-   integer 			    scan_file    ; // file handler
+   integer 			    data_file_1    ; // file handler
+   integer 			    data_file_2    ; // file handler
+   integer 			    scan_file_1    ; // file handler
+   integer 			    scan_file_2    ; // file handler
    integer 			    i,j;
    
    logic   signed [21:0] 	    captured_data;
    initial begin
-       data_file = $fopen("/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/names_data_mod.dat", "r");
+       data_file_1 = $fopen("/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/names_data_mod.dat", "r");
+       data_file_2 = $fopen("/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/2/names_data_mod.dat", "r");
        for (i = 0; i < 9; i++) begin
-//	   for (j = 0; j < 8; j++) begin
-	       scan_file = $fscanf(data_file, "%x", nextName[i]);
-//	   end
+	   scan_file_1 = $fscanf(data_file_1, "%x", nextName_1[i]);
+	   scan_file_2 = $fscanf(data_file_2, "%x", nextName_2[i]);
        end
        clk = 0;
        
