@@ -25,11 +25,17 @@ parameter STRIDE_INDEX_SIZE = 3;
       input wire 			      fake_input_write_address,
       // --------------------------------------------------
   
-      output wire 			      dummy_output_0,
-      output wire 			      dummy_output_1,
-      output wire 			      dummy_output_2,
-      output wire 			      dummy_output_3,
-      output wire 			      dummy_output_4,
+      output wire 			      dummy_output_0_1,
+      output wire 			      dummy_output_1_1,
+      output wire 			      dummy_output_2_1,
+      output wire 			      dummy_output_3_1,
+      output wire 			      dummy_output_4_1,
+
+      output wire 			      dummy_output_0_2,
+      output wire 			      dummy_output_1_2,
+      output wire 			      dummy_output_2_2,
+      output wire 			      dummy_output_3_2,
+      output wire 			      dummy_output_4_2,
   
       // Outputs for debugging stride count
       output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_0_out,
@@ -60,11 +66,17 @@ parameter STRIDE_INDEX_SIZE = 3;
 
    assign clk_mod = clk;
    
-   assign dummy_output_0 = matchBool_1[0];
-   assign dummy_output_1 = matchBool_1[1];
-   assign dummy_output_2 = matchBool_1[2];
-   assign dummy_output_3 = matchBool_1[3];
-   assign dummy_output_4 = matchBool_1[4];
+   assign dummy_output_0_1 = matchBool_1[0];
+   assign dummy_output_1_1 = matchBool_1[1];
+   assign dummy_output_2_1 = matchBool_1[2];
+   assign dummy_output_3_1 = matchBool_1[3];
+   assign dummy_output_4_1 = matchBool_1[4];
+
+   assign dummy_output_0_2 = matchBool_2[0];
+   assign dummy_output_1_2 = matchBool_2[1];
+   assign dummy_output_2_2 = matchBool_2[2];
+   assign dummy_output_3_2 = matchBool_2[3];
+   assign dummy_output_4_2 = matchBool_2[4];
    
    assign debug_address_pipeline_reg_0 = addressPipelineReg_1[1];
    

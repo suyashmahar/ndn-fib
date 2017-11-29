@@ -22,12 +22,18 @@ module top_testbench;
    
    integer 		   name_counter = 0;
 
-   wire 		   dummy_output_0;
-   wire 		   dummy_output_1;
-   wire 		   dummy_output_2;
-   wire 		   dummy_output_3;
-   wire 		   dummy_output_4;
+   wire 		   dummy_output_0_1;
+   wire 		   dummy_output_1_1;
+   wire 		   dummy_output_2_1;
+   wire 		   dummy_output_3_1;
+   wire 		   dummy_output_4_1;
    wire 		   debug_address_pipeline_reg_0;
+
+   wire 		   dummy_output_0_2;
+   wire 		   dummy_output_1_2;
+   wire 		   dummy_output_2_2;
+   wire 		   dummy_output_3_2;
+   wire 		   dummy_output_4_2;
 
    wire [WORD_SIZE - 1 : 0] words_pipeline_3_0;
    wire [WORD_SIZE - 1 : 0] words_pipeline_3_1;
@@ -56,11 +62,17 @@ module top_testbench;
 	      .name_component_1(nextName_1[counter][7-name_counter]),
 	      .name_component_2(nextName_2[counter][7-name_counter]),
 	      
-	      .dummy_output_0(dummy_output_0),
-	      .dummy_output_1(dummy_output_1),
-	      .dummy_output_2(dummy_output_2),
-	      .dummy_output_3(dummy_output_3),
-	      .dummy_output_4(dummy_output_4),
+	      .dummy_output_0_1(dummy_output_0_1),
+	      .dummy_output_1_1(dummy_output_1_1),
+	      .dummy_output_2_1(dummy_output_2_1),
+	      .dummy_output_3_1(dummy_output_3_1),
+	      .dummy_output_4_1(dummy_output_4_1),
+	      
+	      .dummy_output_0_2(dummy_output_0_2),
+	      .dummy_output_1_2(dummy_output_1_2),
+	      .dummy_output_2_2(dummy_output_2_2),
+	      .dummy_output_3_2(dummy_output_3_2),
+	      .dummy_output_4_2(dummy_output_4_2),
 	      
 	      // Wires for debugging stride count
 	      .stageStrideIndex_0_out(stageStrideIndex_0),
