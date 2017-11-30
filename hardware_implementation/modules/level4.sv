@@ -87,11 +87,11 @@
 	   left_pointer_valid_bits[t] = {1'b0};
        end
        
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_mem);
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_mem);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_mem);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_mem);
        
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/vb_level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_valid_bits);
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/vb_level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_valid_bits);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/vb_level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_valid_bits);
+       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/1/vb_level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_valid_bits);
    end // initial begin
 
    reg [WORD_SIZE - 1 : 0] mem_read_val_loc_1;

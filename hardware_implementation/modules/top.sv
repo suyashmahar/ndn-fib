@@ -38,20 +38,20 @@ parameter STRIDE_INDEX_SIZE = 3;
       output wire 			      dummy_output_4_2,
   
       // Outputs for debugging stride count
-      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_0_out,
-      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_1_out,
-      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_2_out,
-      output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_3_out,
+      // output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_0_out,
+      // output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_1_out,
+      // output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_2_out,
+      // output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_3_out,
       //--------------------------------------
 
       // Debugging level memory read
-      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_0_out,
-      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_1_out,
-      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_2_out,
-      output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_3_out,
+      // output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_0_out,
+      // output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_1_out,
+      // output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_2_out,
+      // output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_3_out,
       //------------------------------
 
-      output wire 			      clk_mod,
+  
   
       output wire [POINTER_SIZE - 1 : 0]      debug_address_pipeline_reg_0
       );
@@ -63,8 +63,6 @@ parameter STRIDE_INDEX_SIZE = 3;
    // Pipeline 2
    reg [WORD_SIZE - 1 : 0] 		      next_name_in_2 [MAX_NAME_LENGTH - 1 : 0];
    wire 				      matchBool_2 [TREE_HEIGHT - 1 : 0];
-
-   assign clk_mod = clk;
    
    assign dummy_output_0_1 = matchBool_1[0];
    assign dummy_output_1_1 = matchBool_1[1];
@@ -81,17 +79,17 @@ parameter STRIDE_INDEX_SIZE = 3;
    assign debug_address_pipeline_reg_0 = addressPipelineReg_1[1];
    
    // assignement for debugging stride count
-   assign stageStrideIndex_0_out = stageStrideIndex_1[0];
-   assign stageStrideIndex_1_out = stageStrideIndex_1[1];
-   assign stageStrideIndex_2_out = stageStrideIndex_1[2];
-   assign stageStrideIndex_3_out = stageStrideIndex_1[3];
+   // assign stageStrideIndex_0_out = stageStrideIndex_1[0];
+   // assign stageStrideIndex_1_out = stageStrideIndex_1[1];
+   // assign stageStrideIndex_2_out = stageStrideIndex_1[2];
+   // assign stageStrideIndex_3_out = stageStrideIndex_1[3];
    //--------------------------------------
 
    // assignment statements for debugging level memory
-   assign word_mem_loc_read_0_out = word_mem_loc_read_1[0];
-   assign word_mem_loc_read_1_out = word_mem_loc_read_1[1];
-   assign word_mem_loc_read_2_out = word_mem_loc_read_1[2];
-   assign word_mem_loc_read_3_out = word_mem_loc_read_1[3];
+   // assign word_mem_loc_read_0_out = word_mem_loc_read_1[0];
+   // assign word_mem_loc_read_1_out = word_mem_loc_read_1[1];
+   // assign word_mem_loc_read_2_out = word_mem_loc_read_1[2];
+   // assign word_mem_loc_read_3_out = word_mem_loc_read_1[3];
    
    
    reg 					      clk = 0;			// Real clock for the module
