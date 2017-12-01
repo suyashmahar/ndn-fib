@@ -22,14 +22,14 @@ do
     k=500
     kn=$(($num / $k))
     echo "$kn"
-    for i in $( eval echo {1..$kn..1} )
-    do
-	start=$(($i * $k))
-	sed -n "$start,+499p" temp1 | sort >> temp0
-	# echo -en "\rAt position: $i with start=$start and Added $(eval sed -n "$start,+499p" temp1 | wc -l) words to temp0 size of temp0 is: $(eval cat temp0|wc -l)"
-	echo -en "\rAt position: $i with start=$start"
-    done
-    
+    i=0
+    # read $kn lines a time
+    while mapfile -t -n$k ary && ((${#ary[@]})); do
+	echo $( printf '%s\n' "${ary[@]}" ) | sort >> temp0
+	echo -en "\rAt position: $i"
+	i=$(($i + 1))
+    done < temp1
+        
     # Reverse sorted file and store it in another file
     # Uncomment the following line to perform analysis using reverse first strategy
     tac temp0 > temp2

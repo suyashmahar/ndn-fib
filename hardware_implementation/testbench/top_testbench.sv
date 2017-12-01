@@ -75,13 +75,13 @@ module top_testbench;
 	      .dummy_output_4_2(dummy_output_4_2),
 	      
 	      // Wires for debugging stride count
-	      .stageStrideIndex_0_out(stageStrideIndex_0),
-	      .stageStrideIndex_1_out(stageStrideIndex_1),
-	      .stageStrideIndex_2_out(stageStrideIndex_2),
-	      .stageStrideIndex_3_out(stageStrideIndex_3),
+	      // .stageStrideIndex_0_out(stageStrideIndex_0),
+	      // .stageStrideIndex_1_out(stageStrideIndex_1),
+	      // .stageStrideIndex_2_out(stageStrideIndex_2),
+	      // .stageStrideIndex_3_out(stageStrideIndex_3),
 	      //--------------------------------------
 	      
-	      .debug_address_pipeline_reg_0(debug_address_pipeline_reg_0)
+	      // .debug_address_pipeline_reg_0(debug_address_pipeline_reg_0)
 	      //.matchBool(matchBool)
 	      );
    

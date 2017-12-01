@@ -35,7 +35,7 @@ parameter STRIDE_INDEX_SIZE = 3;
       output wire 			      dummy_output_1_2,
       output wire 			      dummy_output_2_2,
       output wire 			      dummy_output_3_2,
-      output wire 			      dummy_output_4_2,
+      output wire 			      dummy_output_4_2
   
       // Outputs for debugging stride count
       // output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_0_out,
@@ -53,7 +53,7 @@ parameter STRIDE_INDEX_SIZE = 3;
 
   
   
-      output wire [POINTER_SIZE - 1 : 0]      debug_address_pipeline_reg_0
+      // output wire [POINTER_SIZE - 1 : 0]      debug_address_pipeline_reg_0
       );
 
    // Pipeline 1   
