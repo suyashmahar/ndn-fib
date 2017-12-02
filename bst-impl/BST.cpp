@@ -41,7 +41,7 @@ n================================================================
 #include <sstream>
 #include <vector>
 
-enum pointerDirection {LEFT, RIGHT};
+enum class PointerDirection {LEFT, RIGHT};
 
 void setw(int indent){
     while (indent--){
@@ -84,7 +84,7 @@ class bst{
         unsigned long height(node *ref);
         void mirror(node *ref);
         void constructLevelOrderTraversal(std::list<node*> *nodes);
-
+  
         std::string postOrderTraversal() { 
             std::stringstream ss("");
             constructPostOrderTraversal(root, ss);
@@ -325,13 +325,13 @@ std::map<node*, int>
 }
 
 
-void printNodePointers(std::list<node*> *nodes, std::map<node*, int> *mappingTable, pointerDirection pointerType) {
+void printNodePointers(std::list<node*> *nodes, std::map<node*, int> *mappingTable, PointerDirection pointerType) {
   if (!nodes->size()) {
     return;
   } 
   std::list<node*> *levelNodes = new std::list<node*>();
   for (std::list<node*>::iterator it = nodes->begin(); it != nodes->end(); it++) {
-    int outputAdd = (pointerType == LEFT)
+    int outputAdd = (pointerType == PointerDirection::LEFT)
       ? (*mappingTable)[(*it)->left]
       : (*mappingTable)[(*it)->right];
 
@@ -347,6 +347,29 @@ void printNodePointers(std::list<node*> *nodes, std::map<node*, int> *mappingTab
   }
   std::cout << std::endl;
   printNodePointers(levelNodes, mappingTable, pointerType);
+}
+
+void printNodeValidBits(std::list<node*> *nodes, PointerDirection pointerType) {
+  if (!nodes->size()) {
+    return;
+  }
+  
+  std::list<node*> *levelNodes = new std::list<node*>();
+  for (std::list<node*>::iterator it = nodes->begin(); it != nodes->end(); it++) {
+    int validBit = ((*it)->left != NULL) ? 1:0;
+    std::cout << validBit << " ";
+    
+    if ((*it)->left !=NULL) {
+      levelNodes->push_back((*it)->left);
+    }
+    
+    if ((*it)->right !=NULL) {
+      levelNodes->push_back((*it)->right);
+    }
+    
+  }
+  std::cout << std::endl;
+  printNodeValidBits(levelNodes, pointerType);
 }
 
 int main(int argc, char *argv[]) {
@@ -495,10 +518,20 @@ int main(int argc, char *argv[]) {
   std::cout << "\nGenerating Left pointers for nodes..." << std::endl;
   newList = new std::list<node*>();
   newList->push_back(newTree.root);
-  printNodePointers(newList, newMap, LEFT);
+  printNodePointers(newList, newMap, PointerDirection::LEFT);
   
   std::cout << "\nGenerating Right pointers for nodes..." << std::endl;
   newList = new std::list<node*>();
   newList->push_back(newTree.root);
-  printNodePointers(newList, newMap, RIGHT);
+  printNodePointers(newList, newMap, PointerDirection::RIGHT);
+  
+  std::cout << "\nGenerating Left pointer valid bits for nodes..." << std::endl;
+  newList = new std::list<node*>();
+  newList->push_back(newTree.root);
+  printNodeValidBits(newList, PointerDirection::LEFT);
+  
+  std::cout << "\nGenerating Right pointer valid bits for nodes..." << std::endl;
+  newList = new std::list<node*>();
+  newList->push_back(newTree.root);
+  printNodeValidBits(newList, PointerDirection::RIGHT);
 }
