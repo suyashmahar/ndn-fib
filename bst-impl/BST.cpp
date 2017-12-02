@@ -35,10 +35,13 @@ n================================================================
 #include <fstream>
 #include <functional>
 #include <list>
+#include <map>
 #include <openssl/md5.h>
 #include <string>
 #include <sstream>
 #include <vector>
+
+enum pointerDirection {LEFT, RIGHT};
 
 void setw(int indent){
     while (indent--){
@@ -294,6 +297,58 @@ std::vector<std::string> getComponents(std::string name, int strideLen) {
   }
 }
 
+std::map<node*, int>
+*constructNodeRenameMap(std::list<node*> *nodes, std::map<node*, int> *inputMap, int *addressCounter) {
+  if (!nodes->size()) {
+    return inputMap;
+  }
+
+  // Based on the method constructLevelOrderTraversal
+  std::list<node*> *levelNodes = new std::list<node*>();
+  for (std::list<node*>::iterator it = nodes->begin(); it != nodes->end(); it++) {
+    (*inputMap)[*it] = *addressCounter;
+    std::cout << (*addressCounter)++ << " ";
+    
+    if ((*it)->left !=NULL) {
+      levelNodes->push_back((*it)->left);
+    }
+    
+    if ((*it)->right !=NULL) {
+      levelNodes->push_back((*it)->right);
+    }
+    
+  }
+
+  std::cout << std::endl;
+  *addressCounter = 0;
+  return constructNodeRenameMap(levelNodes, inputMap, addressCounter);
+}
+
+
+void printNodePointers(std::list<node*> *nodes, std::map<node*, int> *mappingTable, pointerDirection pointerType) {
+  if (!nodes->size()) {
+    return;
+  } 
+  std::list<node*> *levelNodes = new std::list<node*>();
+  for (std::list<node*>::iterator it = nodes->begin(); it != nodes->end(); it++) {
+    int outputAdd = (pointerType == LEFT)
+      ? (*mappingTable)[(*it)->left]
+      : (*mappingTable)[(*it)->right];
+
+    std::cout << outputAdd  << " ";
+    if ((*it)->left !=NULL) {
+      levelNodes->push_back((*it)->left);
+    }
+    
+    if ((*it)->right !=NULL) {
+      levelNodes->push_back((*it)->right);
+    }
+    
+  }
+  std::cout << std::endl;
+  printNodePointers(levelNodes, mappingTable, pointerType);
+}
+
 int main(int argc, char *argv[]) {
   std::cout << "~===================================================" << std::endl;
   bst newTree;
@@ -429,4 +484,21 @@ int main(int argc, char *argv[]) {
   //  newTree.postorderPrint(newTree.root, 0);
   // }
   std::cout << std::endl;
+
+  newList = new std::list<node*>();
+  newList->push_back(newTree.root);
+  std::map<node*, int> *newMap = new std::map<node*, int>();
+  int addressCounter_ = 0;
+  constructNodeRenameMap(newList, newMap, &addressCounter_);
+  delete newList;
+  
+  std::cout << "\nGenerating Left pointers for nodes..." << std::endl;
+  newList = new std::list<node*>();
+  newList->push_back(newTree.root);
+  printNodePointers(newList, newMap, LEFT);
+  
+  std::cout << "\nGenerating Right pointers for nodes..." << std::endl;
+  newList = new std::list<node*>();
+  newList->push_back(newTree.root);
+  printNodePointers(newList, newMap, RIGHT);
 }
