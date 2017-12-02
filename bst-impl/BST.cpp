@@ -25,6 +25,7 @@ n================================================================
  *      0
 ================================================================
 */
+
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
@@ -33,6 +34,7 @@ n================================================================
 #include <iterator>
 #include <fstream>
 #include <functional>
+#include <list>
 #include <openssl/md5.h>
 #include <string>
 #include <sstream>
@@ -64,7 +66,7 @@ class bst{
         void constructPostOrderTraversal(node *ref, std::stringstream &ss);
         void constructPreOrderTraversal(node *ref, std::stringstream &ss);
         void constructInOrderTraversal(node *ref, std::stringstream &ss);
-
+  
     public:
         node *root;
         bst(){
@@ -78,6 +80,7 @@ class bst{
         int maxWidth(node *ref);
         unsigned long height(node *ref);
         void mirror(node *ref);
+        void constructLevelOrderTraversal(std::list<node*> *nodes);
 
         std::string postOrderTraversal() { 
             std::stringstream ss("");
@@ -178,6 +181,27 @@ void bst::constructInOrderTraversal(node *ref, std::stringstream &ss){
         constructInOrderTraversal(ref->right, ss);
     }
 }
+
+void bst::constructLevelOrderTraversal(std::list<node*> *nodes) {
+  if (!nodes->size()) {
+    return;
+  } 
+  std::list<node*> *levelNodes = new std::list<node*>();
+  for (std::list<node*>::iterator it = nodes->begin(); it != nodes->end(); it++) {
+    std::cout << hexToASCII((*it)->data) << " ";
+    if ((*it)->left !=NULL) {
+      levelNodes->push_back((*it)->left);
+    }
+    
+    if ((*it)->right !=NULL) {
+      levelNodes->push_back((*it)->right);
+    }
+    
+  }
+  std::cout << std::endl;
+  constructLevelOrderTraversal(levelNodes);
+}
+
 void bst::postorderPrint(node* p, int indent) {
     if(p != NULL) {
         if(p->right) {
@@ -376,11 +400,12 @@ int main(int argc, char *argv[]) {
   std::cout << std::endl << "Here\'s a tree for you" << std::endl << std::endl;
   
   // Uncomment following line to print tree
-  // newTree.postorderPrint(newTree.root, 0);
+  newTree.postorderPrint(newTree.root, 0);
 
   std::cout << std::endl;
 
-  //std::cout << "searching for \'470\'... \nResult: " 
+  // Code for searching BST
+  //std::cout << "searching for \'470\'... \nResult: "  
   //        << newTree.search(newTree.root, 470) 
   //        << std::endl; 
     
@@ -392,7 +417,11 @@ int main(int argc, char *argv[]) {
   //    std::cout << std::endl << "Here\'s a mirrored tree for you" << std::endl << std::endl;
   //    newTree.mirror(newTree.root);
   //newTree.postorderPrint(newTree.root, 0);
-    
+
+  std::list<node*> *newList = new std::list<node*>();
+  newList->push_back(newTree.root);
+  std::cout << "====================================================" << std::endl;
+  newTree.constructLevelOrderTraversal(newList);
   std::cout << "====================================================" << std::endl;
   int a = 1;
   // std::cin >> a;
