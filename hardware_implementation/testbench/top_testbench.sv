@@ -16,8 +16,8 @@ module top_testbench;
 
    // Module variables
    reg 	   clk;
-   reg [WORD_SIZE - 1 : 0] nextName_1 [7 : 0][MAX_NAME_LENGTH - 1 : 0];
-   reg [WORD_SIZE - 1 : 0] nextName_2 [7 : 0][MAX_NAME_LENGTH - 1 : 0];
+   reg [WORD_SIZE*MAX_NAME_LENGTH - 1 : 0] nextName_1 [7 : 0];
+   reg [WORD_SIZE*MAX_NAME_LENGTH - 1 : 0] nextName_2 [7 : 0];
    wire 		   matchBool [TREE_HEIGHT - 1 : 0];
    
    integer 		   name_counter = 0;
@@ -59,8 +59,8 @@ module top_testbench;
        ) dut (
 	      .clk_in(clk),
 	      
-	      .name_component_1(nextName_1[counter][7-name_counter]),
-	      .name_component_2(nextName_2[counter][7-name_counter]),
+	      .name_in_1(nextName_1[counter]),
+	      .name_in_2(nextName_2[counter]),
 	      
 	      .dummy_output_0_1(dummy_output_0_1),
 	      .dummy_output_1_1(dummy_output_1_1),
@@ -72,17 +72,7 @@ module top_testbench;
 	      .dummy_output_1_2(dummy_output_1_2),
 	      .dummy_output_2_2(dummy_output_2_2),
 	      .dummy_output_3_2(dummy_output_3_2),
-	      .dummy_output_4_2(dummy_output_4_2),
-	      
-	      // Wires for debugging stride count
-	      // .stageStrideIndex_0_out(stageStrideIndex_0),
-	      // .stageStrideIndex_1_out(stageStrideIndex_1),
-	      // .stageStrideIndex_2_out(stageStrideIndex_2),
-	      // .stageStrideIndex_3_out(stageStrideIndex_3),
-	      //--------------------------------------
-	      
-	      // .debug_address_pipeline_reg_0(debug_address_pipeline_reg_0)
-	      //.matchBool(matchBool)
+	      .dummy_output_4_2(dummy_output_4_2)
 	      );
    
    reg [WORD_SIZE - 1 : 0] 	    result;

@@ -15,45 +15,27 @@ parameter STRIDE_INDEX_SIZE = 3;
     parameter POINTER_SIZE = 6,
     parameter MAX_NAME_LENGTH = 8 // max length of name in words
     )(
-      input 				      clk_in,
-      input [WORD_SIZE - 1 : 0] 	      name_component_1,
-      input [WORD_SIZE - 1 : 0] 	      name_component_2,
+      input 					  clk_in,
+      input [MAX_NAME_LENGTH * WORD_SIZE - 1 : 0] name_in_1,
+      input [MAX_NAME_LENGTH * WORD_SIZE - 1 : 0] name_in_2,
   
       // Inputs for forcing vivado to use RAMS for memories
-      input wire 			      fake_word_in,
-      input wire 			      fake_add_in,
-      input wire 			      fake_input_write_address,
+      input wire 				  fake_word_in,
+      input wire 				  fake_add_in,
+      input wire 				  fake_input_write_address,
       // --------------------------------------------------
   
-      output wire 			      dummy_output_0_1,
-      output wire 			      dummy_output_1_1,
-      output wire 			      dummy_output_2_1,
-      output wire 			      dummy_output_3_1,
-      output wire 			      dummy_output_4_1,
+      output wire 				  dummy_output_0_1,
+      output wire 				  dummy_output_1_1,
+      output wire 				  dummy_output_2_1,
+      output wire 				  dummy_output_3_1,
+      output wire 				  dummy_output_4_1,
 
-      output wire 			      dummy_output_0_2,
-      output wire 			      dummy_output_1_2,
-      output wire 			      dummy_output_2_2,
-      output wire 			      dummy_output_3_2,
-      output wire 			      dummy_output_4_2
-  
-      // Outputs for debugging stride count
-      // output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_0_out,
-      // output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_1_out,
-      // output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_2_out,
-      // output wire [STRIDE_INDEX_SIZE - 1 : 0] stageStrideIndex_3_out,
-      //--------------------------------------
-
-      // Debugging level memory read
-      // output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_0_out,
-      // output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_1_out,
-      // output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_2_out,
-      // output wire [WORD_SIZE - 1 : 0] 	      word_mem_loc_read_3_out,
-      //------------------------------
-
-  
-  
-      // output wire [POINTER_SIZE - 1 : 0]      debug_address_pipeline_reg_0
+      output wire 				  dummy_output_0_2,
+      output wire 				  dummy_output_1_2,
+      output wire 				  dummy_output_2_2,
+      output wire 				  dummy_output_3_2,
+      output wire 				  dummy_output_4_2
       );
 
    // Pipeline 1   
@@ -63,7 +45,17 @@ parameter STRIDE_INDEX_SIZE = 3;
    // Pipeline 2
    reg [WORD_SIZE - 1 : 0] 		      next_name_in_2 [MAX_NAME_LENGTH - 1 : 0];
    wire 				      matchBool_2 [TREE_HEIGHT - 1 : 0];
-   
+
+    genvar name_gv;
+   generate
+      for (name_gv = 0; name_gv < MAX_NAME_LENGTH; name_gv++) begin
+         always @(posedge clk) begin
+            next_name_in_1[MAX_NAME_LENGTH - name_gv - 1] <= name_in_1[(name_gv+1)*WORD_SIZE-1:(name_gv)*WORD_SIZE];
+            next_name_in_2[MAX_NAME_LENGTH - name_gv - 1] <= name_in_2[(name_gv+1)*WORD_SIZE-1:(name_gv)*WORD_SIZE];
+         end
+      end
+   endgenerate
+
    assign dummy_output_0_1 = matchBool_1[0];
    assign dummy_output_1_1 = matchBool_1[1];
    assign dummy_output_2_1 = matchBool_1[2];
@@ -78,45 +70,31 @@ parameter STRIDE_INDEX_SIZE = 3;
    
    assign debug_address_pipeline_reg_0 = addressPipelineReg_1[1];
    
-   // assignement for debugging stride count
-   // assign stageStrideIndex_0_out = stageStrideIndex_1[0];
-   // assign stageStrideIndex_1_out = stageStrideIndex_1[1];
-   // assign stageStrideIndex_2_out = stageStrideIndex_1[2];
-   // assign stageStrideIndex_3_out = stageStrideIndex_1[3];
-   //--------------------------------------
+   wire 					      clk = clk_in;			// Real clock for the module
+   //integer 				      mod_clk_counter = 0;		// Keeps count of module clock
+   //reg 					      flipper = 0;
 
-   // assignment statements for debugging level memory
-   // assign word_mem_loc_read_0_out = word_mem_loc_read_1[0];
-   // assign word_mem_loc_read_1_out = word_mem_loc_read_1[1];
-   // assign word_mem_loc_read_2_out = word_mem_loc_read_1[2];
-   // assign word_mem_loc_read_3_out = word_mem_loc_read_1[3];
-   
-   
-   reg 					      clk = 0;			// Real clock for the module
-   integer 				      mod_clk_counter = 0;		// Keeps count of module clock
-   reg 					      flipper = 0;
-   
-   always @(posedge clk_in) begin
-       if (mod_clk_counter == 2*MAX_NAME_LENGTH-1) begin
-	   clk = ~clk;
-       end else if (mod_clk_counter == MAX_NAME_LENGTH) begin
-	   clk = 0;
-       end
-       mod_clk_counter = (mod_clk_counter + 1)%(2*MAX_NAME_LENGTH);
-       flipper = ~flipper;
-   end
+   // always @(posedge clk_in) begin
+   //     if (mod_clk_counter == 2*MAX_NAME_LENGTH-1) begin
+   // 	   clk = ~clk;
+   //     end else if (mod_clk_counter == MAX_NAME_LENGTH) begin
+   // 	   clk = 0;
+   //     end
+   //     mod_clk_counter = (mod_clk_counter + 1)%(2*MAX_NAME_LENGTH);
+   //     flipper = ~flipper;
+   // end
 
    integer accumulator_counter = 0;
 
-   always @(posedge flipper) begin
-       // Pipeline 1
-       next_name_in_1[accumulator_counter] = name_component_1;
+   // always @(posedge flipper) begin
+   //     // Pipeline 1
+   //     next_name_in_1[accumulator_counter] = name_component_1;
        
-       // Pipeline 2
-       next_name_in_2[accumulator_counter] = name_component_2;
+   //     // Pipeline 2
+   //     next_name_in_2[accumulator_counter] = name_component_2;
 
-       accumulator_counter = (accumulator_counter+1)%MAX_NAME_LENGTH;
-   end
+   //     accumulator_counter = (accumulator_counter+1)%MAX_NAME_LENGTH;
+   // end
    
    wire [STRIDE_INDEX_SIZE - 1 : 0]    stage_output_1 [TREE_HEIGHT - 1 : 0];
    wire [STRIDE_INDEX_SIZE - 1 : 0]    stage_output_2 [TREE_HEIGHT - 1 : 0];
