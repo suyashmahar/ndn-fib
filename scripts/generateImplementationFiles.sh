@@ -3,6 +3,7 @@
 ####----####----####----####----####
 # Declarations
 STRIDE_SIZE=8
+POINTER_SIZE=6
 DEST_DIR=./generatedFiles/
 
 STRIDE_FILE_NAME_PREFIX="level_"
@@ -56,7 +57,7 @@ while read line; do
 	strideArray=( $line )
 	for i in "${strideArray[@]}"; do
 	    echo "level: $i"
-	    ./asciiToHex.py $i $STRIDE_SIZE >> "$DEST_DIR$initialStr$LP_VB_FILE_NAME_SUFFIX"
+	    echo "$i" >> "$DEST_DIR$initialStr$LP_VB_FILE_NAME_SUFFIX"
 	done
 
 	# Update file name for next iteration
@@ -77,7 +78,7 @@ while read line; do
 	strideArray=( $line )
 	for i in "${strideArray[@]}"; do
 	    echo "level: $i"
-	    ./asciiToHex.py $i $STRIDE_SIZE >> "$DEST_DIR$initialStr$RP_VB_FILE_NAME_SUFFIX"
+	    echo "$i" >> "$DEST_DIR$initialStr$RP_VB_FILE_NAME_SUFFIX"
 	done
 
 	# Update file name for next iteration
@@ -98,7 +99,7 @@ while read line; do
 	strideArray=( $line )
 	for i in "${strideArray[@]}"; do
 	    echo "level: $i"
-	    ./asciiToHex.py $i $STRIDE_SIZE >> "$DEST_DIR$initialStr$LP_FILE_NAME_SUFFIX"
+	    ./intToHex.py $i $POINTER_SIZE >> "$DEST_DIR$initialStr$LP_FILE_NAME_SUFFIX"
 	done
 
 	# Update file name for next iteration
@@ -119,7 +120,7 @@ while read line; do
 	strideArray=( $line )
 	for i in "${strideArray[@]}"; do
 	    echo "level: $i"
-	    ./asciiToHex.py $i $STRIDE_SIZE >> "$DEST_DIR$initialStr$RP_FILE_NAME_SUFFIX"
+	    ./intToHex.py $i $POINTER_SIZE >> "$DEST_DIR$initialStr$RP_FILE_NAME_SUFFIX"
 	done
 
 	# Update file name for next iteration
