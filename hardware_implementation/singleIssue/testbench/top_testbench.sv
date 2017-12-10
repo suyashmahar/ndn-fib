@@ -5,7 +5,7 @@
 module top_testbench;
    parameter DATA_FILE_NAME = "/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/names_data.dat";
    parameter WORD_SIZE = 32;
-   parameter TREE_HEIGHT = 100;
+   parameter TREE_HEIGHT = 6;
    parameter POINTER_SIZE = 6;
    parameter MAX_NAME_LENGTH = 8; // max length of name in words
    parameter STRIDE_INDEX_SIZE = 3;
@@ -38,7 +38,7 @@ module top_testbench;
    
    top
      #(
-       .TREE_HEIGHT(100)
+       .TREE_HEIGHT(TREE_HEIGHT)
        ) dut (
 	      .clk(clk),
 	      .name_in(nextName[counter]),
@@ -60,7 +60,7 @@ module top_testbench;
    
    logic   signed [21:0] 	    captured_data;
    initial begin
-       data_file = $fopen("/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/names_data_mod.dat", "r");
+       data_file = $fopen("/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/dualIssue/data/1/names_data_mod.dat", "r");
        for (i = 0; i < 8; i++) begin
 	       scan_file = $fscanf(data_file, "%x", nextName[i]);
        end

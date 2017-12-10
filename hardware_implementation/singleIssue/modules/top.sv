@@ -10,7 +10,7 @@ parameter STRIDE_INDEX_SIZE = 3;
 
 (*DONT_TOUCH = "true"*)module top
   #(
-    parameter TREE_HEIGHT =  100,
+    parameter TREE_HEIGHT =  6,
     parameter WORD_SIZE = 32,
     parameter POINTER_SIZE = 6,
     parameter MAX_NAME_LENGTH = 8 // max length of name in words
@@ -29,6 +29,7 @@ parameter STRIDE_INDEX_SIZE = 3;
       output wire 			      dummy_output_2,
       output wire                 dummy_output_3,
       output wire                 dummy_output_4,
+      output wire dummy_output_5,
   
       output wire [POINTER_SIZE - 1 : 0]      debug_address_pipeline_reg_0
       );
@@ -49,7 +50,8 @@ parameter STRIDE_INDEX_SIZE = 3;
    assign dummy_output_2 = matchBool[2];
    assign dummy_output_3 = matchBool[3];
    assign dummy_output_4 = matchBool[4];
-   
+   assign dummy_output_5 = matchBool[5];
+
    assign debug_address_pipeline_reg_0 = addressPipelineReg[1];
    
    
@@ -76,7 +78,8 @@ parameter STRIDE_INDEX_SIZE = 3;
    
    genvar 			       levelId;
    generate
-       for (levelId = 0; levelId < TREE_HEIGHT & levelId!=4; levelId++) begin
+       for (levelId = 0; levelId < TREE_HEIGHT; levelId++) begin
+       if (levelId!=4) begin
 	   level 
 		      #(
 			.MEM_SIZE(16*1024/*1<<levelId*/),
@@ -98,7 +101,8 @@ parameter STRIDE_INDEX_SIZE = 3;
 		       .is_match_out(matchBool[levelId]),
 		       .no_child_out(noChildBool[levelId])
 		       );
-       end // for (LevelId = 0; i < TREE_HEIGHT; i++)
+       end   // for (LevelId = 0; i < TREE_HEIGHT; i++)
+       end
    endgenerate
    
    

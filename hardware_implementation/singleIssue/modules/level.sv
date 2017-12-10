@@ -59,12 +59,12 @@ parameter MAX_NAME_LENGTH = 8; // max length of name in words
        end
        $display(LEVEL_ID);
        
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, ".dat"}, word_mem);
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_mem);
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_mem);
+       $readmemh({"/home/suyash/Dropbox/Documents/NDN/simData/level", {LEVEL_ID+1{"_"}}, ".dat"}, word_mem);
+       $readmemh({"/home/suyash/Dropbox/Documents/NDN/simData/level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_mem);
+       $readmemh({"/home/suyash/Dropbox/Documents/NDN/simData/level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_mem);
        
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/vb_level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_valid_bits);
-       $readmemh({"/home/suyash/Documents/GitHub/ndn-fib/hardware_implementation/data/vb_level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_valid_bits);
+       $readmemh({"/home/suyash/Dropbox/Documents/NDN/simData/vb_level", {LEVEL_ID+1{"_"}}, "lp.dat"}, left_pointer_valid_bits);
+       $readmemh({"/home/suyash/Dropbox/Documents/NDN/simData/vb_level", {LEVEL_ID+1{"_"}}, "rp.dat"}, right_pointer_valid_bits);
    end // initial begin
 
    reg [WORD_SIZE - 1 : 0] mem_read_val_loc;
