@@ -10,7 +10,7 @@ parameter STRIDE_INDEX_SIZE = 3;
 
 (*DONT_TOUCH = "true"*)module top
   #(
-    parameter TREE_HEIGHT =  5,
+    parameter TREE_HEIGHT =  6,
     parameter WORD_SIZE = 32,
     parameter POINTER_SIZE = 6,
     parameter MAX_NAME_LENGTH = 8 // max length of name in words
@@ -29,13 +29,15 @@ parameter STRIDE_INDEX_SIZE = 3;
       output wire 				  dummy_output_1_1,
       output wire 				  dummy_output_2_1,
       output wire 				  dummy_output_3_1,
-      output wire 				  dummy_output_4_1,
+      output wire               dummy_output_4_1,
+      output wire               dummy_output_5_1,
 
       output wire 				  dummy_output_0_2,
       output wire 				  dummy_output_1_2,
       output wire 				  dummy_output_2_2,
       output wire 				  dummy_output_3_2,
-      output wire 				  dummy_output_4_2
+      output wire 				  dummy_output_4_2,
+      output wire               dummy_output_5_2
       );
 
    // Pipeline 1   
@@ -61,12 +63,14 @@ parameter STRIDE_INDEX_SIZE = 3;
    assign dummy_output_2_1 = matchBool_1[2];
    assign dummy_output_3_1 = matchBool_1[3];
    assign dummy_output_4_1 = matchBool_1[4];
-
+   assign dummy_output_5_1 = matchBool_1[5];
+      
    assign dummy_output_0_2 = matchBool_2[0];
    assign dummy_output_1_2 = matchBool_2[1];
    assign dummy_output_2_2 = matchBool_2[2];
    assign dummy_output_3_2 = matchBool_2[3];
    assign dummy_output_4_2 = matchBool_2[4];
+   assign dummy_output_5_2 = matchBool_2[5];
    
    assign debug_address_pipeline_reg_0 = addressPipelineReg_1[1];
    
@@ -133,7 +137,8 @@ parameter STRIDE_INDEX_SIZE = 3;
    
    genvar 			       levelId;
    generate
-       for (levelId = 0; levelId < TREE_HEIGHT-1; levelId++) begin
+       for (levelId = 0; levelId < TREE_HEIGHT; levelId++) begin
+       if (levelId != 4) begin
 	   level 
 		      #(
 			.MEM_SIZE(16*1024/*1<<levelId*/),
@@ -169,6 +174,7 @@ parameter STRIDE_INDEX_SIZE = 3;
 		       .fake_input_write_address(fake_input_write_address)
 		       );
        end // for (LevelId = 0; i < TREE_HEIGHT; i++)
+       end
    endgenerate
    
    
