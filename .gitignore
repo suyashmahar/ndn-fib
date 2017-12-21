@@ -1,3 +1,7 @@
 # emacs backup files
 *~
-\#*\#
+\#*#
+.#*
+
+# iPython notebook checkpoints
+.ipynb_checkpoints
