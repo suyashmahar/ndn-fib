@@ -21,6 +21,7 @@
 #include <vector>
 
 enum class PointerDirection {LEFT, RIGHT};
+  
 
 void setw(int indent){
   while (indent--){
@@ -59,10 +60,11 @@ public:
   void postorderPrint(node* p, int indent=0);
   bool search(node *ref, unsigned long element);
   unsigned long nodeCount(node *ref);
-  int maxWidth(node *ref);
+
   unsigned long height(node *ref);
   void mirror(node *ref);
   void constructLevelOrderTraversal(std::list<node*> *nodes, std::stringstream *result);
+
   
   std::string postOrderTraversal() { 
     std::stringstream ss("");
@@ -82,6 +84,9 @@ public:
     return ss.str(); 
   }
 };
+
+int maxWidth(node *ref, bst newTree);
+int getWidth(node* root, int level);
 
 node* bst::addToNode(node *ref, unsigned long element) {
   if (ref->data == element){
@@ -356,6 +361,32 @@ void printNodeValidBits(std::list<node*> *nodes, PointerDirection pointerType, s
   printNodeValidBits(levelNodes, pointerType, result);
 }
 
+int maxWidth(node *ref, bst newTree) {
+  int maxWidth = 0;
+  int width;
+  int h = newTree.height(newTree.root)-1;
+  
+  for (int i = 0; i <= h; i++) {
+    width = getWidth(newTree.root, i);
+    if (width > maxWidth) {
+      maxWidth = width;
+    }
+  }
+
+  return maxWidth;
+}
+
+int getWidth(node *root, int level) {
+  if (root == NULL) {
+    return 0;
+  }
+
+  if (level == 1) {
+    return 1;
+  } else if (level > 1) {
+    return getWidth(root->left, level-1) + getWidth(root->right, level-1);
+  }
+}
 
 int main(int argc, char *argv[]) {
   std::cout << "~===================================================" << std::endl;
@@ -458,6 +489,7 @@ int main(int argc, char *argv[]) {
   std::cout << "Lines processed : " << lineCount << std::endl;
   std::cout << "Total number of nodes : " << newTree.nodeCount(newTree.root) << std::endl;
   std::cout << "Height of the tree : " << newTree.height(newTree.root) << std::endl;
+  std::cout << "Max width of the tree : " << maxWidth(newTree.root, newTree) << std::endl;
     
   // Prunsigned longs structure of the tree from left to right (like a fallen tree)
   std::cout << std::endl << "Here\'s a tree for you" << std::endl << std::endl;
