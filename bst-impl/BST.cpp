@@ -366,7 +366,7 @@ int maxWidth(node *ref, bst newTree) {
   int width;
   int h = newTree.height(newTree.root)-1;
   
-  for (int i = 0; i <= h; i++) {
+  for (int i = 0; i < h; i++) {
     width = getWidth(newTree.root, i);
     if (width > maxWidth) {
       maxWidth = width;
@@ -495,7 +495,7 @@ int main(int argc, char *argv[]) {
   std::cout << std::endl << "Here\'s a tree for you" << std::endl << std::endl;
   
   // Uncomment following line to print tree
-  newTree.postorderPrint(newTree.root, 0);
+  // newTree.postorderPrint(newTree.root, 0);
 
   std::cout << std::endl;
 
