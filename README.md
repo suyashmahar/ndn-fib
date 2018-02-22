@@ -24,6 +24,16 @@ Follow the following steps to convert a FIB dataset to memory contents for an FP
 4. Use `./generateImplementationFiles.sh` to generate memory files from the representative files generated from the previous step.
 5. Rename the location for memory files in example Vivado project to use these files, also set the height of the tree appropiately.
 
+## Datasets
+| Dataset                    | sha256sum                                                        |
+|----------------------------|------------------------------------------------------------------|
+| Heavy Workload             | ab7ca2e2bca76eaed07033c6418d0696c4bc173714ef0fe13f417a83934cc55a |
+| Average Workload           | cd31ac071e90a942a0abaec53d8d1a3c5d351a26ba8b1ffaf951bffa70867d8a |
+| 3.5M Dataset               | c309c8fa5c6a888879c33e6b26ad753165af8b2ca3e75f2ecbefc54fbda7c913 |
+| 0.5M dataset               | 8b6a0376a240ee4b3dc88f38a991f97626bdfbd4a8f2c9a95d48c9d27b0cc821 |
+| Combined without blacklist | 2e3447d4eff85431c36951bdee1498330f44f3d30479c428ed7aac7c476ac5fa |
+| Blacklist                  | 21e77e8da0556048c5cf44076284daf98b71b388fb1615033003ffbade17ec19 |
+
 # Contributions
 Feel free to file issues and submit pull requests - contributions are welcome. 
 
