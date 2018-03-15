@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+# Converts normal memory files of verilog to Xilinx COE files
 f="./sample_file"
 for f in ./generatedFiles/*; do
     content=$(awk '{print $0, ","}' "$f" | tr -d ' ' | head -n-1)
