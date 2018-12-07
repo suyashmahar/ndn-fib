@@ -1,5 +1,9 @@
 # NDN-FIB
-This repository contains collection of all the work related to the FPGA based FIB implementation for Name Data Network. Details of the work are available in this paper.
+This repository contains collection of all the work related to the FPGA based FIB implementation for Name Data Network. Details of the work are available in the paper:
+>D. Saxena, Suyash Mahar, V. Raychoudhury, J. Cao  
+>"[**Scalable, High-speed On-chip-based NDN Name Forwarding using FPGA**](https://doi.org/10.1145/3288599.3288613)".  
+>To appear in International Conference on Distributed Computing and Networking (ICDCN), Bangalore, 2019.
+
 
 # Directory Structure
 
